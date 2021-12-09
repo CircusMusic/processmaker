@@ -34,7 +34,7 @@ class ProcessRequestFileTest extends TestCase
             ->withCustomProperties(['data_name' => 'test'])
             ->toMediaCollection();
 
-        $response = $this->apiCall('GET', '/requests/'.$process_request->id.'/files');
+        $response = $this->apiCall('GET')->state('/requests/'.$process_request->id.'/files');
         $response->assertStatus(200);
         $this->assertEquals($response->json()['data'][0]['file_name'], 'photo.jpg');
     }
@@ -99,7 +99,7 @@ class ProcessRequestFileTest extends TestCase
             ->withCustomProperties(['data_name' => 'test'])
             ->toMediaCollection();
 
-        $response = $this->apiCall('GET', '/requests/'.$process_request->id.'/files/'.$file2->id);
+        $response = $this->apiCall('GET')->state('/requests/'.$process_request->id.'/files/'.$file2->id);
         $response->assertStatus(200);
         $this->assertEquals(
             'attachment; filename=photo2.jpg',

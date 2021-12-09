@@ -19,10 +19,7 @@ class RequestsSearchTest extends DuskTestCase
         $user = User::first();
 
         factory(ProcessRequest::class)->create([
-            'name' => 'Some Request',
-            'user_id' => $user->id,
-            'status' => 'ACTIVE',
-        ]);
+            'name' => 'Some Request', 'status' => 'ACTIVE')->state('user_id' => $user->id);
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs($user)

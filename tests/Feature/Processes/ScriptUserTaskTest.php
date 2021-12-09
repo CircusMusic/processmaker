@@ -28,10 +28,7 @@ class ScriptUserTaskTest extends TestCase
         $this->be($user);
 
         factory(Script::class)->create([
-            'id' => 10,
-            'title' => 'titletest',
-            'run_as_user_id' => $user->id,
-        ]);
+            'id' => 10, 'run_as_user_id' => $user->id)->state('title' => 'titletest');
 
         $definitions = $process->getDefinitions();
         $startEvent = $definitions->getEvent('node_2');

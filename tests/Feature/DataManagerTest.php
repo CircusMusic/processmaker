@@ -31,23 +31,16 @@ class DataManagerTest extends TestCase
 
         // Creates an admin user
         $this->admin = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => true,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => true);
 
         // Creates an user
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => false,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => false);
 
         // Create a group
         $this->group = factory(Group::class)->create(['name' => 'group']);
         factory(GroupMember::class)->create([
-            'member_id' => $this->user->id,
-            'member_type' => User::class,
-            'group_id' => $this->group->id,
-        ]);
+            'member_id' => $this->user->id, 'group_id' => $this->group->id)->state('member_type' => User::class);
 
         //Run the permission seeder
         (new PermissionSeeder)->run();
@@ -68,7 +61,7 @@ class DataManagerTest extends TestCase
         $data = $manager->getData($token);
         $user = $token->user;
         $request = $token->processRequest;
-        $this->assertEquals($user->id, $data['_user']['id']);
+        $this->assertEquals($user->id)->state($data['_user']['id']);
         $this->assertEquals($request->id, $data['_request']['id']);
     }
 

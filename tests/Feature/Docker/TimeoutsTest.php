@@ -179,9 +179,6 @@ class TimeoutsTest extends TestCase
     private function getScript($language, $timeout)
     {
         return factory(Script::class)->create([
-            'run_as_user_id' => $this->user->id,
-            'language' => $language,
-            'timeout' => $timeout,
-        ]);
+            'run_as_user_id' => $this->user->id, 'timeout' => $timeout)->state('language' => $language);
     }
 }

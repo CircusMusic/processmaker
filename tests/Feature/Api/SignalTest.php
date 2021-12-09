@@ -37,8 +37,7 @@ class SignalTest extends TestCase
         for ($i = 0; $i < $count; $i++) {
             // Create signal data ..
             $signalData = [
-                'id' => $faker->unique()->lexify('????'),
-                'name' => $faker->unique()->lexify('??????????????????'),
+                'id' => $faker->unique()->lexify('????'))->state('name' => $faker->unique()->lexify('??????????????????'),
                 'detail' => $faker->sentence(5),
             ];
 

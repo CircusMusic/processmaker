@@ -22,11 +22,7 @@ class TasksTest extends TestCase
         $process = factory(Process::class)->create($data);
         $taskId = 'TaskUID';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $this->user->id,
-            'assignment_type' => User::class,
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => $taskId);
 
         return $process;
     }
@@ -59,11 +55,7 @@ class TasksTest extends TestCase
 
         // Create a comment where the user is not tagged
         factory(Comment::class)->create([
-            'user_id' => $this->user->id,
-            'body' => 'This comment should not be accessible because @xyz is a non existent user',
-            'commentable_type' => ProcessRequestToken::class,
-            'commentable_id' => $task['id'],
-        ]);
+            'user_id' => $this->user->id, 'commentable_type' => ProcessRequestToken::class)->state('body' => 'This comment should not be accessible because @xyz is a non existent user');
 
         // The user might not be able to access the task view.
         $response = $this->webGet(self::TASKS_URL.'/'.$task['id'].'/edit', []);
@@ -71,11 +63,7 @@ class TasksTest extends TestCase
 
         // Create a comment where the user is tagged
         factory(Comment::class)->create([
-            'user_id' => $this->user->id,
-            'body' => 'This comment should be accessible by @'.$this->user->username,
-            'commentable_type' => ProcessRequestToken::class,
-            'commentable_id' => $task['id'],
-        ]);
+            'user_id' => $this->user->id, 'commentable_type' => ProcessRequestToken::class)->state('body' => 'This comment should be accessible by @'.$this->user->username);
 
         // The user should be able to access the task view.
         $response = $this->webGet(self::TASKS_URL.'/'.$task['id'].'/edit', []);

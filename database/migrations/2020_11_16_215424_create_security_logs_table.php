@@ -27,10 +27,7 @@ class CreateSecurityLogsTable extends Migration
 
         if (! Permission::where('name', 'view-security-logs')->first()) {
             factory(Permission::class)->create([
-                'title' => 'View Security Logs',
-                'name' => 'view-security-logs',
-                'group' => 'Security Logs',
-            ]);
+                'title' => 'View Security Logs', 'group' => 'Security Logs')->state('name' => 'view-security-logs');
         }
     }
 

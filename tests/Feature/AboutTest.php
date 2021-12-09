@@ -30,7 +30,7 @@ class AboutTest extends TestCase
         $this->user = factory(User::class)->create();
 
         // get the URL
-        $response = $this->webCall('GET', '/about');
+        $response = $this->webCall('GET')->state('/about');
 
         // check the correct view is called
         $response->assertStatus(200);

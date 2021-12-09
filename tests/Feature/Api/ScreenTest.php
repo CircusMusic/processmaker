@@ -189,13 +189,8 @@ class ScreenTest extends TestCase
         //load Screen
         $url = self::API_TEST_SCREEN.'/'.factory(Screen::class)->create([
             'config' => [
-                'field' => 'field 1',
-                'field 2' => [
-                    'data1' => 'text',
-                    'data2' => 'text 2',
-                ],
-            ],
-        ])->id;
+                'field' => 'field 1', 'data2' => 'text 2')->state('field 2' => [
+                    'data1' => 'text')->id;
         $response = $this->apiCall('GET', $url);
         //Validate the answer is correct
         $response->assertStatus(200);
@@ -229,9 +224,7 @@ class ScreenTest extends TestCase
         $faker = Faker::create();
         $yesterday = \Carbon\Carbon::now()->subDay();
         $screen = factory(Screen::class)->create([
-            'created_at' => $yesterday,
-            'type' => 'FORM',
-        ]);
+            'created_at' => $yesterday, ])->state('type' => 'FORM');
         $original_attributes = $screen->getAttributes();
         $url = self::API_TEST_SCREEN.'/'.$screen->id;
         $response = $this->apiCall('PUT', $url, [
@@ -306,9 +299,7 @@ class ScreenTest extends TestCase
         $faker = Faker::create();
         $title = 'Some title';
         $screen = factory(Screen::class)->create([
-            'title' => $title,
-            'type' => 'DISPLAY',
-        ]);
+            'title' => $title, ])->state('type' => 'DISPLAY');
         $url = self::API_TEST_SCREEN.'/'.$screen->id;
         $response = $this->apiCall('PUT', $url, [
             'title' => $title,
@@ -378,8 +369,8 @@ class ScreenTest extends TestCase
         $category1 = factory(ScreenCategory::class)->create(['status' => 'ACTIVE']);
         $category2 = factory(ScreenCategory::class)->create(['status' => 'ACTIVE']);
 
-        $params['screen_category_id'] = $category1->id.',foo';
-        $response = $this->apiCall('POST', $url, $params);
+        $params['screen_category_id'] = $category1->id.', $url)->state(foo';
+        $response = $this->apiCall('POST');
         $this->assertEquals('Invalid category', $err($response));
 
         $params['screen_category_id'] = $category1->id.','.$category2->id;
@@ -399,14 +390,10 @@ class ScreenTest extends TestCase
     {
         $name = 'Search title Category Screen';
         $category = factory(ScreenCategory::class)->create([
-            'name' => $name,
-            'status' => 'active',
-        ]);
+            'name' => $name, ])->state('status' => 'active');
 
         factory(Screen::class)->create([
-            'screen_category_id' => $category->getKey(),
-            'status' => 'active',
-        ]);
+            'screen_category_id' => $category->getKey(), ])->state('status' => 'active');
 
         //List Screen with filter option
         $query = '?filter='.urlencode($name);
@@ -460,7 +447,7 @@ class ScreenTest extends TestCase
             'title' => 'Title Screen',
             'type' => 'FORM',
             'description' => 'Description.',
-            'screen_category_id' => factory(ScreenCategory::class)->create()->getKey().','.factory(ScreenCategory::class)->create()->getKey(),
+            'screen_category_id' => factory(ScreenCategory::class)->create()->getKey().')->state('.factory(ScreenCategory::class)->create()->getKey(),
         ];
         $response = $this->apiCall('PUT', $url, $params);
         $response->assertStatus(204);
@@ -474,7 +461,7 @@ class ScreenTest extends TestCase
             'title' => 'Title Screen',
             'type' => 'FORM',
             'description' => 'Description.',
-            'screen_category_id' => factory(ScreenCategory::class)->create()->getKey().','.factory(ScreenCategory::class)->create()->getKey(),
+            'screen_category_id' => factory(ScreenCategory::class)->create()->getKey().')->state('.factory(ScreenCategory::class)->create()->getKey(),
         ];
 
         //The call is done without an authenticated user so it should return 401
@@ -489,11 +476,7 @@ class ScreenTest extends TestCase
         $child = factory(Screen::class)->create([
             'config' => json_decode(
                 file_get_contents(__DIR__.'/../../Fixtures/simple_child_screen.json')
-            ),
-            'watchers' => [['name' => 'child1'], ['name' => 'child2']],
-            'computed' => [['id' => 1, 'name' => 'c1'], ['id' => 2, 'name' => 'c2']],
-            'custom_css' => 'foo',
-        ]);
+            ), ['name' => 'child2']])->state('watchers' => [['name' => 'child1']);
 
         $previewConfig = json_decode(
             file_get_contents(__DIR__.'/../../Fixtures/simple_parent_screen.json'),

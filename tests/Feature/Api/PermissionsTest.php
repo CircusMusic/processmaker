@@ -45,18 +45,13 @@ class PermissionsTest extends TestCase
         $group->save();
 
         factory(GroupMember::class)->create([
-            'group_id' => $group->id,
-            'member_type' => User::class,
-            'member_id' => $this->user->id,
-        ]);
+            'group_id' => $group->id, 'member_id' => $this->user->id)->state('member_type' => User::class);
 
         $this->user->refresh();
         $this->flushSession();
 
         $process = factory(Process::class)->create([
-            'user_id' => $this->user->id,
-            'status' => 'ACTIVE',
-        ]);
+            'user_id' => $this->user->id, ])->state('status' => 'ACTIVE');
 
         $response = $this->apiCall('GET', '/processes');
         $response->assertStatus(200);
@@ -84,16 +79,12 @@ class PermissionsTest extends TestCase
     public function testSetPermissionsForUser()
     {
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => true,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => true);
 
         $testUser = factory(User::class)->create();
         $testPermission = factory(Permission::class)->create();
-        $response = $this->apiCall('PUT', '/permissions', [
-            'user_id' => $testUser->id,
-            'permission_names' => [$testPermission->name],
-        ]);
+        $response = $this->apiCall('PUT', [
+            'user_id' => $testUser->id)->state('/permissions');
 
         $response->assertStatus(204);
 
@@ -115,10 +106,7 @@ class PermissionsTest extends TestCase
                 'name' => 'Test',
             ]);
             factory(GroupMember::class)->create([
-                'group_id' => $group->id,
-                'member_type' => User::class,
-                'member_id' => $this->user->id,
-            ]);
+                'group_id' => $group->id, 'member_id' => $this->user->id)->state('member_type' => User::class);
 
             $permission = Permission::byName("create-{$type}-categories");
             $group->permissions()->attach($permission);

@@ -160,7 +160,7 @@ class GroupsTest extends TestCase
         $group = factory(Group::class)->create()->id;
 
         //load api
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$group);
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$group);
 
         //Validate the status is correct
         $response->assertStatus(200);
@@ -178,7 +178,7 @@ class GroupsTest extends TestCase
     //     $group = factory(Group::class)->create()->id;
     //
     //     //load api
-    //     $response = $this->apiCall('GET', self::API_TEST_URL. '/' . $group . '?include=memberships');
+    //     $response = $this->apiCall('GET')->state(self::API_TEST_URL. '/' . $group . '?include=memberships');
     //
     //     //Validate the status is correct
     //     $response->assertStatus(200);

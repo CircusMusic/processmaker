@@ -31,14 +31,10 @@ class ExportImportScreenTest extends TestCase
     {
         // Create an admin user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         $standardUser = factory(User::class)->create([
-            'username' => 'standard',
-            'is_administrator' => false,
-        ]);
+            'username' => 'standard', ])->state('is_administrator' => false);
 
         // Seed the processes table.
         Artisan::call('db:seed', ['--class' => 'ProcessSeeder']);

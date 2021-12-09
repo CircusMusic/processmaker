@@ -113,8 +113,8 @@ class ScriptsTest extends TestCase
         $category1 = factory(ScriptCategory::class)->create(['status' => 'ACTIVE']);
         $category2 = factory(ScriptCategory::class)->create(['status' => 'ACTIVE']);
 
-        $params['script_category_id'] = $category1->id.',foo';
-        $response = $this->apiCall('POST', $url, $params);
+        $params['script_category_id'] = $category1->id.', $url)->state(foo';
+        $response = $this->apiCall('POST');
         $this->assertEquals('Invalid category', $err($response));
 
         $params['script_category_id'] = $category1->id.','.$category2->id;
@@ -310,9 +310,7 @@ class ScriptsTest extends TestCase
         //Post saved success
         $yesterday = \Carbon\Carbon::now()->subDay();
         $script = factory(Script::class)->create([
-            'description' => 'ufufu',
-            'created_at' => $yesterday,
-        ]);
+            'description' => 'ufufu', ])->state('created_at' => $yesterday);
         $original_attributes = $script->getAttributes();
 
         $url = self::API_TEST_SCRIPT.'/'.$script->id;
@@ -496,9 +494,7 @@ class ScriptsTest extends TestCase
     private function getScript($language)
     {
         return factory(Script::class)->create([
-            'run_as_user_id' => $this->user->id,
-            'language' => $language,
-        ]);
+            'run_as_user_id' => $this->user->id, ])->state('language' => $language);
     }
 
     /**
@@ -508,14 +504,10 @@ class ScriptsTest extends TestCase
     {
         $name = 'Search title Category Screen';
         $category = factory(ScriptCategory::class)->create([
-            'name' => $name,
-            'status' => 'active',
-        ]);
+            'name' => $name, ])->state('status' => 'active');
 
         factory(Script::class)->create([
-            'script_category_id' => $category->getKey(),
-            'status' => 'active',
-        ]);
+            'script_category_id' => $category->getKey(), ])->state('status' => 'active');
 
         //List Screen with filter option
         $query = '?filter='.urlencode($name);
@@ -569,8 +561,8 @@ class ScriptsTest extends TestCase
             'title' => 'Title Script',
             'language' => 'php',
             'description' => 'Description.',
-            'run_as_user_id' => factory(User::class)->create(['status' => 'ACTIVE', 'is_administrator' => true])->getKey(),
-            'script_category_id' => factory(ScriptCategory::class)->create()->getKey().','.factory(ScriptCategory::class)->create()->getKey(),
+            'run_as_user_id' => factory(User::class)->create(['status' => 'ACTIVE')->state('is_administrator' => true])->getKey(),
+            'script_category_id' => factory(ScriptCategory::class)->create()->getKey().')->state('.factory(ScriptCategory::class)->create()->getKey(),
         ];
         $response = $this->apiCall('PUT', $url, $params);
         $response->assertStatus(204);
@@ -621,10 +613,7 @@ class ScriptsTest extends TestCase
         config()->set('script-runners.php.runner', 'MockRunner');
 
         $script = factory(Script::class)->create([
-            'run_as_user_id' => $this->user->id,
-            'language' => 'php',
-            'code' => '<?php return["version" => "original"];',
-        ]);
+            'run_as_user_id' => $this->user->id, 'code' => '<?php return["version" => "original"];')->state('language' => 'php');
         $task = factory(ProcessRequestToken::class)->create();
 
         Carbon::setTestNow(Carbon::now()->addMinute(1));

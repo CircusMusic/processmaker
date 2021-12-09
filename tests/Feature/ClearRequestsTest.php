@@ -69,23 +69,11 @@ class ClearRequestsTest extends TestCase
         ]);
         //Assign the task to $this->user
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_5',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_5');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_10',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_10');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_24',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_24');
 
         return $process;
     }
@@ -187,10 +175,7 @@ class ClearRequestsTest extends TestCase
 
         // Add comments to Requests
         $model = factory(ProcessRequest::class)->create([
-            'process_id' => $process->id,
-            'callable_id' => 'PROCESS_1',
-            'process_collaboration_id' => null,
-        ]);
+            'process_id' => $process->id, 'process_collaboration_id' => null)->state('callable_id' => 'PROCESS_1');
 
         factory(Comment::class, 5)->create([
             'commentable_id' => $model->getKey(),

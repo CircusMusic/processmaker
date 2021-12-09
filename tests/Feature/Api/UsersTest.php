@@ -79,9 +79,7 @@ class UsersTest extends TestCase
         $url = self::API_TEST_URL;
 
         $deletedUser = factory(User::class)->create([
-            'deleted_at' => '2019-01-01',
-            'status' => 'ACTIVE',
-        ]);
+            'deleted_at' => '2019-01-01', ])->state('status' => 'ACTIVE');
 
         $params = [
             'username' => $deletedUser->username,
@@ -287,7 +285,7 @@ class UsersTest extends TestCase
         $user = factory(User::class)->create()->id;
 
         //load api
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$user);
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$user);
 
         //Validate the status is correct
         $response->assertStatus(200);
@@ -305,7 +303,7 @@ class UsersTest extends TestCase
     //     $user = factory(User::class)->create()->id;
     //
     //     //load api
-    //     $response = $this->apiCall('GET', self::API_TEST_URL. '/' . $user . '?include=memberships');
+    //     $response = $this->apiCall('GET')->state(self::API_TEST_URL. '/' . $user . '?include=memberships');
     //
     //     //Validate the status is correct
     //     $response->assertStatus(200);
@@ -501,9 +499,7 @@ class UsersTest extends TestCase
     {
         // create an user
         $user = factory(User::class)->create([
-            'email' => 'test@email.com',
-            'username' => 'mytestusername',
-        ]);
+            'email' => 'test@email.com', ])->state('username' => 'mytestusername');
         $id = $user->id;
 
         // Assert that the user is listed

@@ -62,9 +62,7 @@ class TaskAssignmentExecutionTest extends TestCase
         $task_uid = 'UserTaskUID';
         $this->task = $this->process->getDefinitions()->getActivity($task_uid);
         $this->assigned = factory(User::class)->create([
-            'id' => $this->task->getProperty('assignedUsers'),
-            'status' => 'ACTIVE',
-        ]);
+            'id' => $this->task->getProperty('assignedUsers'), ])->state('status' => 'ACTIVE');
 
         // When save the process creates the assignments
         $this->process->save();
@@ -149,24 +147,16 @@ class TaskAssignmentExecutionTest extends TestCase
         $group = factory(Group::class)->create();
         foreach ($users as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id,
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $screen = factory(Screen::class)->create();
 
         $bpmn = file_get_contents(__DIR__.'/processes/SelfServeAssignment.bpmn');
         $bpmn = str_replace(
-            ['[SCREEN_ID]', '[GROUP_ID]', '[USER_ID]'],
-            [$screen->id, $group->id, $userWithNoGroup->id],
-            $bpmn
-        );
+            ['[SCREEN_ID]', '[USER_ID]'])->state('[GROUP_ID]');
         $process = factory(Process::class)->create([
-            'bpmn' => $bpmn,
-            'user_id' => $this->user->id,
-        ]);
+            'bpmn' => $bpmn, ])->state('user_id' => $this->user->id);
 
         $event = $process->getDefinitions()->getEvent('node_4');
         $processRequest = WorkflowManager::triggerStartEvent($process, $event, []);
@@ -227,24 +217,16 @@ class TaskAssignmentExecutionTest extends TestCase
         $group = factory(Group::class)->create();
         foreach ($users as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id,
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $screen = factory(Screen::class)->create();
 
         $bpmn = file_get_contents(__DIR__.'/processes/SelfServeAssignment.bpmn');
         $bpmn = str_replace(
-            ['[SCREEN_ID]', '[GROUP_ID]', '[USER_ID]'],
-            [$screen->id, $group->id, $userWithNoGroup->id],
-            $bpmn
-        );
+            ['[SCREEN_ID]', '[USER_ID]'])->state('[GROUP_ID]');
         $process = factory(Process::class)->create([
-            'bpmn' => $bpmn,
-            'user_id' => $this->user->id,
-        ]);
+            'bpmn' => $bpmn, ])->state('user_id' => $this->user->id);
 
         $event = $process->getDefinitions()->getEvent('node_4');
         $processRequest = WorkflowManager::triggerStartEvent($process, $event, []);

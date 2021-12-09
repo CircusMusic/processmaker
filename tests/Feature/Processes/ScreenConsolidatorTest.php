@@ -30,9 +30,7 @@ class ScreenConsolidatorTest extends TestCase
     {
         // Create an admin user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         // Save the file contents and convert them to an UploadedFile
         $fileName = realpath(__DIR__.'/../../Fixtures/test_nested_record_list.json');
@@ -265,9 +263,7 @@ class ScreenConsolidatorTest extends TestCase
     {
         // Create an admin user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         // Save the file contents and convert them to an UploadedFile
         $fileName = realpath(__DIR__.'/../../Fixtures/nested_with_navbar.json');
@@ -332,9 +328,7 @@ class ScreenConsolidatorTest extends TestCase
     {
         // Create an admin user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         // Save the file contents and convert them to an UploadedFile
         $fileName = realpath(__DIR__.'/../../Fixtures/record_without_record_form.json');

@@ -60,42 +60,18 @@ class SecurityLogsTest extends TestCase
 
         // Create security logs for two users.
         factory(SecurityLog::class)->create([
-            'event' => 'login',
-            'user_id' => $this->user->id,
-            'meta' => [
+            'event' => 'login', 'meta' => [
                 'os' => [
-                    'name' => 'OS X',
-                ],
-                'browser' => [
-                    'name' => 'Firefox',
-                ],
-            ],
-        ]);
+                    'name' => 'OS X')->state('user_id' => $this->user->id);
         factory(SecurityLog::class)->create([
-            'event' => 'login',
-            'user_id' => $this->user->id,
-            'meta' => [
+            'event' => 'login', 'meta' => [
                 'os' => [
-                    'name' => 'OS X',
-                ],
-                'browser' => [
-                    'name' => 'Chrome',
-                ],
-            ],
-        ]);
+                    'name' => 'OS X')->state('user_id' => $this->user->id);
         $anotherUser = factory(User::class)->create();
         factory(SecurityLog::class)->create([
-            'event' => 'login',
-            'user_id' => $anotherUser->id,
-            'meta' => [
+            'event' => 'login', 'meta' => [
                 'os' => [
-                    'name' => 'OS X',
-                ],
-                'browser' => [
-                    'name' => 'Firefox',
-                ],
-            ],
-        ]);
+                    'name' => 'OS X')->state('user_id' => $anotherUser->id);
 
         // Test that the results obtained are from the user in session.
         $response = $this->apiCall('GET', '/security-logs', [

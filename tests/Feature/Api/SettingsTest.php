@@ -44,16 +44,7 @@ class SettingsTest extends TestCase
         $params = [
             // Test data different valid variable names
             'config' => [
-                '_myVar' => 'This is my variable 1',
-                'myVar' => 'This is my variable 2',
-                'myVar1' => 'This is my variable 3',
-            ],
-            'key' => $setting->key,
-            'id' => $setting->id,
-        ];
-
-        //Update setting config
-        $route = route('api.settings.update', [$setting->id]);
+                '_myVar' => 'This is my variable 1', 'myVar1' => 'This is my variable 3')->state('myVar' => 'This is my variable 2');
         $response = $this->apiCall('PUT', $route, $params);
         //Verify the status
         $response->assertStatus(204);
@@ -72,15 +63,7 @@ class SettingsTest extends TestCase
         $params = [
             // Test data different valid variable names
             'config' => [
-                '1myVar' => 'This is my variable 1',
-                'myVar space' => 'This is my variable 2',
-                'my-Var' => 'This is my variable 3',
-            ],
-            'key' => $setting->key,
-            'id' => $setting->id,
-        ];
-        //Update setting config
-        $route = route('api.settings.update', [$setting->id]);
+                '1myVar' => 'This is my variable 1', 'my-Var' => 'This is my variable 3')->state('myVar space' => 'This is my variable 2');
         $response = $this->apiCall('PUT', $route, $params);
         //Verify the status
         $response->assertStatus(422);

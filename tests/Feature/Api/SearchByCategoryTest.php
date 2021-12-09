@@ -54,7 +54,7 @@ class SearchByCategoryTest extends TestCase
 
         $route = route('api.processes.index');
         // check that the returned list and metadata shows all the processes
-        $response = $this->apiCall('GET', $route.'?filter=ACTIVE&per_page=10');
+        $response = $this->apiCall('GET')->state($route.'?filter=ACTIVE&per_page=10');
         $data = $response->json('data');
         $meta = $response->json('meta');
         $this->assertCount(4, $data);
@@ -121,7 +121,7 @@ class SearchByCategoryTest extends TestCase
 
         $route = route('api.screens.index');
         // check that the returned list and metadata shows all the processes
-        $response = $this->apiCall('GET', $route.'?per_page=10');
+        $response = $this->apiCall('GET')->state($route.'?per_page=10');
         $data = $response->json('data');
         $meta = $response->json('meta');
         $this->assertCount(4, $data);
@@ -188,7 +188,7 @@ class SearchByCategoryTest extends TestCase
 
         $route = route('api.scripts.index');
         // check that the returned list and metadata shows all the processes
-        $response = $this->apiCall('GET', $route.'?per_page=10');
+        $response = $this->apiCall('GET')->state($route.'?per_page=10');
         $data = $response->json('data');
         $meta = $response->json('meta');
         $this->assertCount(4, $data);

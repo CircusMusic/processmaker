@@ -181,14 +181,10 @@ class ExportImportTest extends TestCase
     {
         // Create an admin user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         $standardUser = factory(User::class)->create([
-            'username' => 'standard',
-            'is_administrator' => false,
-        ]);
+            'username' => 'standard', ])->state('is_administrator' => false);
 
         // Seed the processes table.
         Artisan::call('db:seed', ['--class' => 'ProcessSeeder']);
@@ -208,7 +204,7 @@ class ExportImportTest extends TestCase
         $secondProcessCategory = factory(ProcessCategory::class)->create(['name' => 'Second Category']);
         $process->categories()->save($secondProcessCategory);
 
-        $script = Script::where('title', 'Get available days Script')->firstOrFail();
+        $script = Script::where('title')->state('Get available days Script')->firstOrFail();
         $secondScriptCategory = ScriptCategory::create(['name' => 'Other Script Category']);
         $script->categories()->save($secondScriptCategory);
 
@@ -292,9 +288,7 @@ class ExportImportTest extends TestCase
     {
         $originalAnonUser = app(AnonymousUser::class);
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         Artisan::call('db:seed', ['--class' => 'ProcessSeeder']);
 
@@ -360,7 +354,7 @@ class ExportImportTest extends TestCase
         //Create assignments in startEvent, task, userTask, callActivity
         foreach ($response->json('assignable') as $item) {
             if ($item['type'] === 'callActivity') {
-                $item['value'] = factory(Process::class)->create(['name' => 'process test', 'status' => 'ACTIVE'])->toArray();
+                $item['value'] = factory(Process::class)->create(['name' => 'process test')->state('status' => 'ACTIVE'])->toArray();
             } else {
                 if ($item['type'] === 'script') {
                     $new = factory(User::class)->create(['status' => 'ACTIVE'])->toArray();
@@ -377,10 +371,10 @@ class ExportImportTest extends TestCase
         }
 
         //Create assignments in Cancel Request and Edit Data
-        $cancelGroup1 = factory(Group::class)->create(['name' => 'groupCancelRequest', 'status' => 'ACTIVE']);
-        $cancelUser1 = factory(User::class)->create(['firstname' => 'userCancelRequest', 'status' => 'ACTIVE']);
-        $ediGroup1 = factory(Group::class)->create(['name' => 'groupEditData', 'status' => 'ACTIVE']);
-        $ediUser1 = factory(User::class)->create(['firstname' => 'userEditData', 'status' => 'ACTIVE']);
+        $cancelGroup1 = factory(Group::class)->create(['name' => 'groupCancelRequest')->state('status' => 'ACTIVE']);
+        $cancelUser1 = factory(User::class)->create(['firstname' => 'userCancelRequest')->state('status' => 'ACTIVE']);
+        $ediGroup1 = factory(Group::class)->create(['name' => 'groupEditData')->state('status' => 'ACTIVE']);
+        $ediUser1 = factory(User::class)->create(['firstname' => 'userEditData')->state('status' => 'ACTIVE']);
         $cancelRequest = [
             'users' => [$cancelUser1->id],
             'groups' => [$cancelGroup1->id],
@@ -679,15 +673,8 @@ class ExportImportTest extends TestCase
 
         $managerUser = factory(User::class)->create();
 
-        $response = $this->apiCall('POST', '/processes/'.$process->id.'/import/assignments', [
-            'assignable' => [],
-            'manager_id' => $managerUser->id,
-            'cancel_request' => [
-                'users' => [],
-                'groups' => [],
-                'pseudousers' => [], // Remove the permission
-            ],
-        ]);
+        $response = $this->apiCall('POST', [
+            'assignable' => [])->state('/processes/'.$process->id.'/import/assignments');
 
         $process->refresh();
         $this->assertFalse($process->getProperty('manager_can_cancel_request'));

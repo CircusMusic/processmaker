@@ -30,11 +30,7 @@ class SanitizationTest extends TestCase
 
         $user = factory(User::class)->create(['is_administrator' => true]);
         $script = factory(Script::class)->make([
-            'title' => $title,
-            'description' => $description,
-            'code' => $code,
-            'run_as_user_id' => $user->id,
-        ]);
+            'title' => $title, 'code' => $code)->state('description' => $description);
 
         ScriptExecutor::setTestConfig($script->language);
 

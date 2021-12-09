@@ -79,9 +79,7 @@ class NotificationsTest extends TestCase
     public function testNotificationListDates()
     {
         $newEntity = factory(Notification::class)->create([
-            'notifiable_type' => User::class,
-            'notifiable_id' => $this->user->id,
-        ]);
+            'notifiable_type' => User::class, ])->state('notifiable_id' => $this->user->id);
         $route = self::API_TEST_URL;
         $response = $this->apiCall('GET', $route);
 
@@ -105,7 +103,7 @@ class NotificationsTest extends TestCase
         $notification = factory(Notification::class)->create()->id;
 
         //load api
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$notification);
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$notification);
 
         //Validate the status is correct
         $response->assertStatus(200);

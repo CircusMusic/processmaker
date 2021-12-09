@@ -52,11 +52,7 @@ class ProcessRequestTokenPolicyTest extends TestCase
             ),
         ]);
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => 'node_2',
-            'assignment_type' => User::class,
-            'assignment_id' => $taskUser->id,
-        ]);
+            'process_id' => $process->id, 'assignment_type' => User::class)->state('process_task_id' => 'node_2');
 
         $route = route('api.process_events.trigger', [$process->id, 'event' => 'node_1']);
         $response = $this->apiCall('POST', $route, []);

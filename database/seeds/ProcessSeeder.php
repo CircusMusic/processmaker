@@ -71,8 +71,7 @@ class ProcessSeeder extends Seeder
                 $scriptTask = $scriptTaskNode->getBpmnElementInstance();
                 //Create a row in the Scripts table
                 $script = factory(Script::class)->create([
-                    'title' => $scriptTask->getName('name').' Script',
-                    'code' => $scriptTaskNode->getElementsByTagName('script')->item(0)->nodeValue,
+                    'title' => $scriptTask->getName('name').' Script')->state('code' => $scriptTaskNode->getElementsByTagName('script')->item(0)->nodeValue,
                     'language' => $this->languageOfMimeType($scriptTask->getScriptFormat()),
                 ]);
                 $scriptTaskNode->setAttributeNS(
@@ -104,10 +103,7 @@ class ProcessSeeder extends Seeder
             $notificationTypes = ['started', 'canceled', 'completed'];
             foreach ($notificationTypes as $notificationType) {
                 factory(ProcessNotificationSetting::class)->create([
-                    'process_id' => $process->getKey(),
-                    'notifiable_type' => 'requester',
-                    'notification_type' => $notificationType,
-                ]);
+                    'process_id' => $process->getKey(), 'notification_type' => $notificationType)->state('notifiable_type' => 'requester');
             }
 
             //Add screens to the process
@@ -136,17 +132,9 @@ class ProcessSeeder extends Seeder
                     }
                     //Add notifications to task events
                     factory(ProcessNotificationSetting::class)->create([
-                        'process_id' => $process->getKey(),
-                        'element_id' => $id,
-                        'notifiable_type' => 'assignee',
-                        'notification_type' => 'assigned',
-                    ]);
+                        'process_id' => $process->getKey(), 'notifiable_type' => 'assignee')->state('element_id' => $id);
                     factory(ProcessNotificationSetting::class)->create([
-                        'process_id' => $process->getKey(),
-                        'element_id' => $id,
-                        'notifiable_type' => 'requester',
-                        'notification_type' => 'completed',
-                    ]);
+                        'process_id' => $process->getKey(), 'notifiable_type' => 'requester')->state('element_id' => $id);
                 }
             }
 
@@ -171,16 +159,12 @@ class ProcessSeeder extends Seeder
             $json = json_decode(file_get_contents(database_path('processes/screens/'.$screenRef.'.json')));
 
             return factory(Screen::class)->create([
-                'title' => $json[0]->name,
-                'config' => $json,
-            ]);
+                'title' => $json[0]->name, ])->state('config' => $json);
         } elseif (file_exists(database_path('processes/screens/'.$id.'.json'))) {
             $json = json_decode(file_get_contents(database_path('processes/screens/'.$id.'.json')));
 
             return factory(Screen::class)->create([
-                'title' => $json[0]->name,
-                'config' => $json,
-            ]);
+                'title' => $json[0]->name, ])->state('config' => $json);
         }
     }
 
@@ -244,9 +228,7 @@ class ProcessSeeder extends Seeder
         $group = Group::where('name', $name)->first();
         if (! $group) {
             $group = factory(Group::class)->create([
-                'name' => $name,
-                'status' => 'ACTIVE',
-            ]);
+                'name' => $name, ])->state('status' => 'ACTIVE');
         }
         factory(GroupMember::class)->create([
             'member_id' => function () use ($name) {

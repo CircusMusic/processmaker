@@ -21,9 +21,7 @@ trait RequestHelper
         parent::setUp();
 
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => true,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => true);
 
         if ($this->withPermissions === true) {
             //Run the permission seeder

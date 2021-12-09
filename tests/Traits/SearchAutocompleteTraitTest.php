@@ -16,17 +16,11 @@ class SearchAutocompleteTraitTest extends TestCase
         $regularProcessCategory = factory(ProcessCategory::class)->create();
         $systemProcessCategory = factory(ProcessCategory::class)->create(['is_system' => true]);
         $regularProcess = factory(Process::class)->create([
-            'name' => 'some regular process',
-            'process_category_id' => $regularProcessCategory,
-        ]);
+            'name' => 'some regular process', ])->state('process_category_id' => $regularProcessCategory);
         $anotherRegularProcess = factory(Process::class)->create([
-            'name' => 'another regular process',
-            'process_category_id' => $regularProcessCategory,
-        ]);
+            'name' => 'another regular process', ])->state('process_category_id' => $regularProcessCategory);
         $systemProcess = factory(Process::class)->create([
-            'name' => 'some system process',
-            'process_category_id' => $systemProcessCategory,
-        ]);
+            'name' => 'some system process', ])->state('process_category_id' => $systemProcessCategory);
 
         $call = function ($query) {
             $result = $this->webCall('GET', '/requests/search?'.$query);

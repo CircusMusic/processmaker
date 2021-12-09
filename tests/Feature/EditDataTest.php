@@ -30,24 +30,17 @@ class EditDataTest extends TestCase
 
         // Creates an admin user
         $this->admin = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => true,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => true);
 
         // Creates a user
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => false,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => false);
 
         // Create a group
         $this->group = factory(Group::class)->create(['name' => 'group']);
 
         factory(GroupMember::class)->create([
-            'member_id' => $this->user->id,
-            'member_type' => User::class,
-            'group_id' => $this->group->id,
-        ]);
+            'member_id' => $this->user->id, 'group_id' => $this->group->id)->state('member_type' => User::class);
 
         // Run the permission seeder
         (new PermissionSeeder)->run();
@@ -117,8 +110,7 @@ class EditDataTest extends TestCase
         $task_uid = 'UserTaskUID';
         $definitions = $process->getDefinitions();
         $task = $definitions->findElementById($task_uid);
-        $task->setAttributeNS(WorkflowServiceProvider::PROCESS_MAKER_NS,
-            'assignment', 'user');
+        $task->setAttributeNS(WorkflowServiceProvider::PROCESS_MAKER_NS, 'user')->state('assignment');
         $task->setAttributeNS(WorkflowServiceProvider::PROCESS_MAKER_NS,
             'assignedUsers', $userAssigned->id);
         $process->bpmn = $definitions->saveXml();

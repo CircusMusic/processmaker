@@ -91,9 +91,7 @@ class EnvironmentVariablesTest extends TestCase
     {
         // Create an environment variable with a set name
         $variable = factory(EnvironmentVariable::class)->create([
-            'name' => 'testname',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'testname', ])->state('value' => 'testvalue');
         $variable->fresh();
         // Is now fetch the variable and see if success
         $response = $this->apiCall('get', self::API_TEST_VARIABLES.'/'.$variable->id);
@@ -113,14 +111,10 @@ class EnvironmentVariablesTest extends TestCase
     {
         // Create an environment variable with a set name for the update
         $variable = factory(EnvironmentVariable::class)->create([
-            'name' => 'testname',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'testname', ])->state('value' => 'testvalue');
         // Create a variable with another name that will clash with the uniqueness rule
         factory(EnvironmentVariable::class)->create([
-            'name' => 'anothername',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'anothername', ])->state('value' => 'testvalue');
 
         $variable->fresh();
         $data = [
@@ -139,9 +133,7 @@ class EnvironmentVariablesTest extends TestCase
     {
         // Create an environment variable with a set name
         $variable = factory(EnvironmentVariable::class)->create([
-            'name' => 'testname',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'testname', ])->state('value' => 'testvalue');
         $variable->fresh();
         $data = [
             'name' => 'newname',
@@ -202,9 +194,7 @@ class EnvironmentVariablesTest extends TestCase
     {
         // Create an environment variable with a set name
         $variable = factory(EnvironmentVariable::class)->create([
-            'name' => 'testname',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'testname', ])->state('value' => 'testvalue');
         $variable->fresh();
         $response = $this->apiCall('DELETE', self::API_TEST_VARIABLES.'/'.$variable->id);
 
@@ -221,9 +211,7 @@ class EnvironmentVariablesTest extends TestCase
     {
         // Create an environment variable with a set name
         $variable = factory(EnvironmentVariable::class)->create([
-            'name' => 'testname',
-            'value' => 'testvalue',
-        ]);
+            'name' => 'testname', ])->state('value' => 'testvalue');
         $variable->fresh();
         $data = [
             'name' => 'newname',

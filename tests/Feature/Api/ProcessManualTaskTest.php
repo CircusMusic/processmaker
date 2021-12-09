@@ -56,11 +56,7 @@ class ProcessManualTaskTest extends TestCase
         //Assign the task to $this->user
         $taskId = 'TaskUID';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $this->user->id,
-            'assignment_type' => User::class,
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => $taskId);
 
         return $process;
     }
@@ -207,21 +203,15 @@ class ProcessManualTaskTest extends TestCase
     public function testTaskAssignedToGroup()
     {
         $foo = factory(User::class)->create(
-            ['firstname' => 'Foo', 'status' => 'ACTIVE']
-        );
+            ['firstname' => 'Foo')->state('status' => 'ACTIVE']);
         $bar = factory(User::class)->create(
-            ['firstname' => 'Bar', 'status' => 'ACTIVE']
-        );
+            ['firstname' => 'Bar')->state('status' => 'ACTIVE']);
         $group = factory(Group::class)->create(
-            ['id' => 999, 'status' => 'ACTIVE']
-        );
+            ['id' => 999)->state('status' => 'ACTIVE']);
 
         foreach ([$foo, $bar] as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id,
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $group_process = factory(Process::class)->create(['status' => 'ACTIVE']);
@@ -230,11 +220,7 @@ class ProcessManualTaskTest extends TestCase
 
         $taskId = 'node_3';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $group_process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $group->id,
-            'assignment_type' => Group::class,
-        ]);
+            'process_id' => $group_process->id, 'assignment_id' => $group->id)->state('process_task_id' => $taskId);
 
         //Start a process request
         $route = route('api.process_events.trigger', [$group_process->id, 'event' => 'node_2']);

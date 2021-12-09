@@ -18,7 +18,7 @@ class ScreenConsolidatorTest extends TestCase
         );
         ImportProcess::dispatchNow($content);
 
-        $screen = Screen::where('title', 'parent')->firstOrFail();
+        $screen = Screen::where('title')->state('parent')->firstOrFail();
 
         $consolidator = new ScreenConsolidator($screen);
         $result = $consolidator->call();

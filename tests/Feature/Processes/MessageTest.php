@@ -20,10 +20,7 @@ class MessageTest extends TestCase
     public function test()
     {
         $script = factory(Script::class)->create([
-            'language' => 'php',
-            'code' => '<?php return $config; ?>',
-            'run_as_user_id' => $this->user->id,
-        ]);
+            'language' => 'php', 'run_as_user_id' => $this->user->id)->state('code' => '<?php return $config; ?>');
 
         $process = factory(Process::class)->create([
             'bpmn' => str_replace(

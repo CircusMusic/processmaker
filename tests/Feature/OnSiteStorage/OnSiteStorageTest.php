@@ -52,11 +52,7 @@ class OnSiteStorageTest extends TestCase
         //Assign the task to $this->user
         $taskId = 'UserTaskUID';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $this->user->id,
-            'assignment_type' => User::class,
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => $taskId);
 
         return $process;
     }

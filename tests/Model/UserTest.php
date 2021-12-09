@@ -30,16 +30,10 @@ class UserTest extends TestCase
         $p_group = factory(Group::class)->create(['name' => 'Presidents']);
 
         factory(GroupMember::class)->create([
-            'group_id' => $nl_group->id,
-            'member_type' => User::class,
-            'member_id' => $technician_user,
-        ]);
+            'group_id' => $nl_group->id, 'member_id' => $technician_user)->state('member_type' => User::class);
 
         factory(GroupMember::class)->create([
-            'group_id' => $p_group->id,
-            'member_type' => User::class,
-            'member_id' => $president_user->id,
-        ]);
+            'group_id' => $p_group->id, 'member_id' => $president_user->id)->state('member_type' => User::class);
 
         $p_group->permissions()->attach($ln_permission);
         $nl_group->permissions()->attach($dn_permission);
@@ -109,7 +103,7 @@ class UserTest extends TestCase
             }
         };
 
-        $testFor('process', 'processes');
+        $testFor('process')->state('processes');
         $testFor('screen', 'screens');
         $testFor('script', 'scripts');
     }

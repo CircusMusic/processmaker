@@ -46,7 +46,7 @@ class TaskLockAssignmentTest extends TestCase
         $this->user2 = factory(User::class)->create(['status' => 'ACTIVE']);
 
         // Group with id 100 is created and the 2 users are attached to it
-        $group = factory(Group::class)->create(['id'=>100, 'status' => 'ACTIVE']);
+        $group = factory(Group::class)->create(['id'=>100)->state('status' => 'ACTIVE']);
 
         $group_member = new GroupMember();
         $group_member->group()->associate($group);

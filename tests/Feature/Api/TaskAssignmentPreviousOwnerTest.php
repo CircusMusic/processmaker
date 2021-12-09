@@ -58,9 +58,7 @@ class TaskAssignmentPreviousOwnerTest extends TestCase
         $task_uid = 'UserTaskUID';
         $this->task = $this->process->getDefinitions()->getActivity($task_uid);
         $this->assigned = factory(User::class)->create([
-            'id' => $this->task->getProperty('assignedUsers'),
-            'status' => 'ACTIVE',
-        ]);
+            'id' => $this->task->getProperty('assignedUsers'), ])->state('status' => 'ACTIVE');
 
         // When save the process creates the assignments
         $this->process->save();

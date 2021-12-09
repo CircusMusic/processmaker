@@ -107,12 +107,8 @@ class TaskAssignmentTest extends TestCase
         $task_uid = Faker::create()->uuid;
         $group = factory(Group::class)->create();
 
-        $response = $this->apiCall('PUT', self::API_TEST_URL.'/'.$processTaskAssignment->id, [
-            'process_id' => $process->id,
-            'process_task_id' => $task_uid,
-            'assignment_id' => $group->id,
-            'assignment_type' => 'ProcessMaker\Models\Group',
-        ]);
+        $response = $this->apiCall('PUT', [
+            'process_id' => $process->id)->state(self::API_TEST_URL.'/'.$processTaskAssignment->id);
 
         $response->assertStatus(200);
 
@@ -141,7 +137,7 @@ class TaskAssignmentTest extends TestCase
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -175,7 +171,7 @@ class TaskAssignmentTest extends TestCase
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -190,7 +186,7 @@ class TaskAssignmentTest extends TestCase
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -205,7 +201,7 @@ class TaskAssignmentTest extends TestCase
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 }

@@ -98,9 +98,7 @@ class ProcessRequestsTest extends TestCase
 
         //Create requests with data
         factory(ProcessRequest::class)->create([
-            'name' => $requestname,
-            'data' => ['test' => 'value1'],
-        ]);
+            'name' => $requestname, ])->state('data' => ['test' => 'value1']);
 
         //Set direction to ascending
         $query = "?page=1&include=data&order_by=data.test&order_direction=ASC&filter=$requestname";
@@ -119,14 +117,10 @@ class ProcessRequestsTest extends TestCase
 
         //Create requests with data
         factory(ProcessRequest::class)->create([
-            'name' => $requestname,
-            'data' => ['test' => 'value1'],
-        ]);
+            'name' => $requestname, ])->state('data' => ['test' => 'value1']);
 
         factory(ProcessRequest::class)->create([
-            'name' => $requestname,
-            'data' => ['test' => 'value2'],
-        ]);
+            'name' => $requestname, ])->state('data' => ['test' => 'value2']);
 
         //Set direction to ascending
         $query = "?page=1&include=data&order_by=data.test&order_direction=ASC&filter=$requestname";
@@ -208,14 +202,10 @@ class ProcessRequestsTest extends TestCase
     public function testListRequestWithType()
     {
         $in_progress = factory(ProcessRequest::class)->create([
-            'status' => 'ACTIVE',
-            'user_id' => $this->user->id,
-        ]);
+            'status' => 'ACTIVE', ])->state('user_id' => $this->user->id);
 
         $completed = factory(ProcessRequest::class)->create([
-            'status' => 'COMPLETED',
-            'user_id' => $this->user->id,
-        ]);
+            'status' => 'COMPLETED', ])->state('user_id' => $this->user->id);
 
         $response = $this->apiCall('GET', self::API_TEST_URL.'/?type=completed');
         $json = $response->json();
@@ -273,7 +263,7 @@ class ProcessRequestsTest extends TestCase
         $request = factory(ProcessRequest::class)->create()->id;
 
         //load api
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$request);
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$request);
 
         //Validate the status is correct
         $response->assertStatus(200);
@@ -369,9 +359,7 @@ class ProcessRequestsTest extends TestCase
 
         // Create the initial process request
         $initialProcessVersionRequest = factory(ProcessRequest::class)->create([
-            'user_id' => $nonAdmin->id,
-            'process_id' => $process->id,
-        ]);
+            'user_id' => $nonAdmin->id, ])->state('process_id' => $process->id);
 
         // Attempt to cancel a request
         $this->user = $nonAdmin;
@@ -394,9 +382,7 @@ class ProcessRequestsTest extends TestCase
         // same process, this time the process request
         // will honor the new process configuration
         $secondProcessVersionRequest = factory(ProcessRequest::class)->create([
-            'user_id' => $nonAdmin->id,
-            'process_id' => $process->id,
-        ]);
+            'user_id' => $nonAdmin->id, ])->state('process_id' => $process->id);
 
         // Attempt to cancel a request
         $this->user = $nonAdmin;
@@ -419,10 +405,7 @@ class ProcessRequestsTest extends TestCase
         // give the user editData permission to get past the route check
         $request->processVersion->usersCanEditData()->sync([
             $this->user->id => [
-                'method' => 'EDIT_DATA',
-                'process_id' => $request->process->id,
-            ],
-        ]);
+                'method' => 'EDIT_DATA', ])->state('process_id' => $request->process->id);
 
         $route = route('api.requests.update', [$request->id]);
         $response = $this->apiCall('PUT', $route, ['status' => 'COMPLETED']);
@@ -523,9 +506,7 @@ class ProcessRequestsTest extends TestCase
 
         // Crate a user without administrator privileges
         $user = factory(User::class)->create([
-            'status' => 'ACTIVE',
-            'is_administrator' => false,
-        ]);
+            'status' => 'ACTIVE', ])->state('is_administrator' => false);
 
         // Add the file to the request
         $addedMedia = $request
@@ -550,9 +531,7 @@ class ProcessRequestsTest extends TestCase
 
         $request = factory(ProcessRequest::class)->create(['status' => 'ACTIVE']);
         $token = factory(ProcessRequestToken::class)->create([
-            'process_request_id' => $request->id,
-            'user_id' => $participant->id,
-        ]);
+            'process_request_id' => $request->id, ])->state('user_id' => $participant->id);
 
         $url = route('api.requests.show', $request);
         $this->user = $otherUser;
@@ -577,10 +556,7 @@ class ProcessRequestsTest extends TestCase
         $process = factory(Process::class)->create();
 
         $initialProcessRequest = factory(ProcessRequest::class)->create([
-            'status' => 'COMPLETED',
-            'data' => ['foo' => 'bar'],
-            'process_id' => $process->id,
-        ]);
+            'status' => 'COMPLETED', 'process_id' => $process->id)->state('data' => ['foo' => 'bar']);
 
         $url = route('api.requests.update', $initialProcessRequest);
 
@@ -621,10 +597,7 @@ class ProcessRequestsTest extends TestCase
         // the process configuration how it existed when the
         // process request was initiated
         $secondProcessRequest = factory(ProcessRequest::class)->create([
-            'status' => 'COMPLETED',
-            'data' => ['foo' => 'bar'],
-            'process_id' => $process->id,
-        ]);
+            'status' => 'COMPLETED', 'process_id' => $process->id)->state('data' => ['foo' => 'bar']);
 
         $url = route('api.requests.update', $secondProcessRequest);
         $response = $this->apiCall('put', $url, ['data' => ['foo' => '123']]);

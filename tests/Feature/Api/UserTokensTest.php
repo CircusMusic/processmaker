@@ -39,7 +39,7 @@ class UserTokensTest extends TestCase
     public function testListTokensWithEmptyTokensForOtherUser()
     {
         $user = factory(User::class)->create();
-        $response = $this->apiCall('GET', '/users/'.$user->id.'/tokens');
+        $response = $this->apiCall('GET')->state('/users/'.$user->id.'/tokens');
 
         //Validate the header status code
         $response->assertStatus(200);
@@ -56,7 +56,7 @@ class UserTokensTest extends TestCase
 
         $targetUser = factory(User::class)->create();
 
-        $response = $this->apiCall('GET', '/users/'.$targetUser->id.'/tokens');
+        $response = $this->apiCall('GET')->state('/users/'.$targetUser->id.'/tokens');
         $response->assertStatus(403);
     }
 
@@ -80,7 +80,7 @@ class UserTokensTest extends TestCase
 
         $targetUser = factory(User::class)->create();
 
-        $response = $this->apiCall('POST', '/users/'.$targetUser->id.'/tokens');
+        $response = $this->apiCall('POST')->state('/users/'.$targetUser->id.'/tokens');
         $response->assertStatus(403);
     }
 
@@ -151,9 +151,8 @@ class UserTokensTest extends TestCase
         $targetUser = factory(User::class)->create();
 
         $user = $this->user;
-        $response = $this->apiCall('POST', '/users/'.$user->id.'/tokens', [
-            'name' => 'Test Token',
-        ]);
+        $response = $this->apiCall('POST', [
+            'name' => 'Test Token')->state('/users/'.$user->id.'/tokens');
 
         //Validate the header status code
         $response->assertStatus(200);
@@ -164,7 +163,7 @@ class UserTokensTest extends TestCase
         $user = factory(User::class)->create();
         $this->user = $user;
 
-        $response = $this->apiCall('GET', '/users/'.$targetUser->id.'/tokens/'.$responseObj['token']['id']);
+        $response = $this->apiCall('GET')->state('/users/'.$targetUser->id.'/tokens/'.$responseObj['token']['id']);
 
         //Validate the header status code
         $response->assertStatus(403);
@@ -204,9 +203,8 @@ class UserTokensTest extends TestCase
         $targetUser = factory(User::class)->create();
 
         $user = $this->user;
-        $response = $this->apiCall('POST', '/users/'.$user->id.'/tokens', [
-            'name' => 'Test Token',
-        ]);
+        $response = $this->apiCall('POST', [
+            'name' => 'Test Token')->state('/users/'.$user->id.'/tokens');
 
         //Validate the header status code
         $response->assertStatus(200);
@@ -217,7 +215,7 @@ class UserTokensTest extends TestCase
         $user = factory(User::class)->create();
         $this->user = $user;
 
-        $response = $this->apiCall('DELETE', '/users/'.$targetUser->id.'/tokens/'.$responseObj['token']['id']);
+        $response = $this->apiCall('DELETE')->state('/users/'.$targetUser->id.'/tokens/'.$responseObj['token']['id']);
 
         //Validate the header status code
         $response->assertStatus(403);

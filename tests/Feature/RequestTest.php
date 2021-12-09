@@ -61,7 +61,7 @@ class RequestTest extends TestCase
         $this->user = factory(User::class)->create();
         $request = factory(ProcessRequest::class)->create();
 
-        $response = $this->webCall('GET', '/requests/'.$request->id);
+        $response = $this->webCall('GET')->state('/requests/'.$request->id);
         $response->assertStatus(403);
 
         $this->user->is_administrator = true;
@@ -84,7 +84,7 @@ class RequestTest extends TestCase
         $this->user = factory(User::class)->create();
         $request = factory(ProcessRequest::class)->create();
 
-        $response = $this->webCall('GET', '/requests/'.$request->id);
+        $response = $this->webCall('GET')->state('/requests/'.$request->id);
         $response->assertStatus(403);
 
         $request->update(['user_id' => $this->user->id]);
@@ -106,7 +106,7 @@ class RequestTest extends TestCase
     {
         $Request_id = factory(ProcessRequest::class)->create()->id;
         // get the URL
-        $response = $this->webCall('GET', '/requests/'.$Request_id);
+        $response = $this->webCall('GET')->state('/requests/'.$Request_id);
         $response->assertStatus(200);
         // check the correct view is called
         $response->assertViewIs('requests.show');
@@ -133,7 +133,7 @@ class RequestTest extends TestCase
 
         $request_id = factory(ProcessRequest::class)->create()->id;
 
-        $response = $this->webCall('GET', '/requests/'.$request_id);
+        $response = $this->webCall('GET')->state('/requests/'.$request_id);
         $response->assertStatus(200);
     }
 
@@ -153,7 +153,7 @@ class RequestTest extends TestCase
             ->withCustomProperties(['data_name' => 'test'])
             ->toMediaCollection();
 
-        $response = $this->webCall('GET', '/requests/'.$process_request->id);
+        $response = $this->webCall('GET')->state('/requests/'.$process_request->id);
         // Full request->getMedia payload is sent for Vue, so assert some HTML also
         $response->assertSee('photo2.jpg</a>');
         $response->assertSee('photo3.jpg</a>');
@@ -184,10 +184,7 @@ class RequestTest extends TestCase
     {
         $process = factory(Process::class)->create();
         $process_request = factory(ProcessRequest::class)->create([
-            'name' => $process->name,
-            'process_id' => $process->id,
-            'data' => ['form_input_1' => 'TEST DATA'],
-        ]);
+            'name' => $process->name, 'data' => ['form_input_1' => 'TEST DATA'])->state('process_id' => $process->id);
         // get the URL
         $response = $this->webCall('GET', '/requests/'.$process_request->id);
 
@@ -205,17 +202,12 @@ class RequestTest extends TestCase
     public function testShowCustomRequestDetailScreenSummaryTab()
     {
         $screen = factory(Screen::class)->create([
-            'type' => 'DISPLAY',
-            'config' => $this->screen,
-        ]);
+            'type' => 'DISPLAY', ])->state('config' => $this->screen);
         $process = factory(Process::class)->create([
             'request_detail_screen_id' => $screen->id,
         ]);
         $process_request = factory(ProcessRequest::class)->create([
-            'name' => $process->name,
-            'process_id' => $process->id,
-            'data' => ['form_input_1' => 'TEST DATA'],
-        ]);
+            'name' => $process->name, 'data' => ['form_input_1' => 'TEST DATA'])->state('process_id' => $process->id);
         // get the URL
         $response = $this->webCall('GET', '/requests/'.$process_request->id);
 

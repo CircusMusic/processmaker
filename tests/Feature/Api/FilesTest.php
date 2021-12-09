@@ -90,7 +90,7 @@ class FilesTest extends TestCase
         $model = factory(User::class)->create();
         $addedMedia = $model->addMedia($fileUpload)->toMediaCollection('local');
 
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$addedMedia->id.'/contents');
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$addedMedia->id.'/contents');
 
         // Validate the header status code
         $response->assertStatus(200);
@@ -150,10 +150,9 @@ class FilesTest extends TestCase
 
         // In the data array add the file to update
         $data = [
-            'file' => $fileUploadUpdate,
-        ];
+            'file' => $fileUploadUpdate, self::API_TEST_URL.'/'.$addedMedia->id)->state(];
 
-        $response = $this->apiCall('PUT', self::API_TEST_URL.'/'.$addedMedia->id, $data);
+        $response = $this->apiCall('PUT');
 
         // Validate the header status code
         $response->assertStatus(201);
@@ -180,7 +179,7 @@ class FilesTest extends TestCase
         $model = factory(User::class)->create();
         $addedMedia = $model->addMedia($fileUpload)->toMediaCollection('local');
 
-        $response = $this->apiCall('DELETE', self::API_TEST_URL.'/'.$addedMedia->id);
+        $response = $this->apiCall('DELETE')->state(self::API_TEST_URL.'/'.$addedMedia->id);
 
         // Validate the header status code
         $response->assertStatus(204);
@@ -201,7 +200,7 @@ class FilesTest extends TestCase
 
         //The call is done without an authenticated user so it should return 401
         $response = $this->actingAs(factory(User::class)->create())
-                    ->json('GET', '/api/1.0'.self::API_TEST_URL, ['']);
+                    ->json('GET', [''])->state('/api/1.0'.self::API_TEST_URL);
         $response->assertStatus(401);
     }
 }

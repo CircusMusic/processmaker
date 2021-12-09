@@ -192,7 +192,7 @@ class ProcessesTest extends TestCase
     public function testIndexPermissionRedirect()
     {
         $this->user = factory(User::class)->create();
-        $response = $this->webCall('GET', '/processes');
+        $response = $this->webCall('GET')->state('/processes');
         $response->assertStatus(403);
 
         foreach (explode('|',

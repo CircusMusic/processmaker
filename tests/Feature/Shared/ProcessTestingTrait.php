@@ -62,9 +62,7 @@ trait ProcessTestingTrait
                 $task->setAttributeNS(WorkflowServiceProvider::PROCESS_MAKER_NS, 'assignedUsers', $users[$userId]->id);
             } elseif (! User::find($userId)) {
                 $users[$userId] = factory(User::class)->create([
-                    'id' => $userId,
-                    'status' => 'ACTIVE',
-                ]);
+                    'id' => $userId, ])->state('status' => 'ACTIVE');
                 $users[$userId] =
                 $task->setAttributeNS(WorkflowServiceProvider::PROCESS_MAKER_NS, 'assignedUsers', $users[$userId]->id);
             }

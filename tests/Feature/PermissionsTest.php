@@ -66,10 +66,7 @@ class PermissionsTest extends TestCase
 
         // Assign our user to the group.
         factory(GroupMember::class)->create([
-            'group_id' => $group->id,
-            'member_type' => User::class,
-            'member_id' => $this->user->id,
-        ]);
+            'group_id' => $group->id, 'member_id' => $this->user->id)->state('member_type' => User::class);
 
         // Set the URL & permission to test.
         $url = '/designer/screens';

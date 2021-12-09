@@ -154,7 +154,7 @@ class TasksTest extends TestCase
         $user_2 = factory(User::class)->create();
 
         $process = factory(Process::class)->create();
-        $category = factory(ProcessCategory::class)->create(['status' => 'ACTIVE', 'is_system' => true]);
+        $category = factory(ProcessCategory::class)->create(['status' => 'ACTIVE')->state('is_system' => true]);
         $systemProcess = factory(Process::class)->create(['process_category_id' => $category->id]);
         // Create some tokens
         factory(ProcessRequestToken::class, 2)->create([
@@ -191,9 +191,7 @@ class TasksTest extends TestCase
         $request = factory(ProcessRequest::class)->create(['name' => $name]);
         // Create some tokens
         $newEntity = factory(ProcessRequestToken::class)->create([
-            'user_id' => $this->user->id,
-            'process_request_id' => $request->id,
-        ]);
+            'user_id' => $this->user->id, ])->state('process_request_id' => $request->id);
         $route = route('api.'.$this->resource.'.index', []);
         $response = $this->apiCall('GET', $route);
 
@@ -283,10 +281,7 @@ class TasksTest extends TestCase
         $request = factory(ProcessRequest::class)->create();
         // Create some tokens
         factory(ProcessRequestToken::class)->create([
-            'user_id' => $this->user->id,
-            'completed_at' => null,
-            'process_request_id' => $request->id,
-        ]);
+            'user_id' => $this->user->id, 'process_request_id' => $request->id)->state('completed_at' => null);
         factory(ProcessRequestToken::class)->create([
             'user_id' => $this->user->id,
             'completed_at' => Carbon::now(),
@@ -419,9 +414,7 @@ class TasksTest extends TestCase
         $this->user = factory(User::class)->create(); // normal user
         $request = factory(ProcessRequest::class)->create();
         $token = factory(ProcessRequestToken::class)->create([
-            'user_id' => $this->user->id,
-            'status' => 'ACTIVE',
-        ]);
+            'user_id' => $this->user->id, ])->state('status' => 'ACTIVE');
         $params = ['status' => 'COMPLETED', 'data' => ['foo' => '<p>bar</p>', '_DO_NOT_SANITIZE' => '[]']];
         WorkflowManager::shouldReceive('completeTask')
             ->once()
@@ -444,9 +437,7 @@ class TasksTest extends TestCase
         $bpmn = file_get_contents(base_path('tests/Fixtures/single_task_with_screen.bpmn'));
         $bpmn = str_replace('pm:screenRef="1"', 'pm:screenRef="'.$screen->id.'"', $bpmn);
         $process = factory(Process::class)->create([
-            'bpmn' => $bpmn,
-            'user_id' => $this->user->id,
-        ]);
+            'bpmn' => $bpmn, ])->state('user_id' => $this->user->id);
 
         $route = route('api.process_events.trigger', $process);
 
@@ -497,16 +488,10 @@ class TasksTest extends TestCase
 
         $group1 = factory(Group::class)->create();
         factory(GroupMember::class)->create([
-            'member_id' => $user->id,
-            'member_type' => User::class,
-            'group_id' => $group1->id,
-        ]);
+            'member_id' => $user->id, 'group_id' => $group1->id)->state('member_type' => User::class);
         $group2 = factory(Group::class)->create();
         factory(GroupMember::class)->create([
-            'member_id' => $user->id,
-            'member_type' => User::class,
-            'group_id' => $group2->id,
-        ]);
+            'member_id' => $user->id, 'group_id' => $group2->id)->state('member_type' => User::class);
 
         $params = [
             'status' => 'ACTIVE',
@@ -549,9 +534,7 @@ class TasksTest extends TestCase
             ])
         );
         $regularTask = factory(ProcessRequestToken::class)->create([
-            'status' => 'ACTIVE',
-            'user_id' => $user->id,
-        ]);
+            'status' => 'ACTIVE', ])->state('user_id' => $user->id);
 
         $userId = $user->id;
         $url = route('api.tasks.index').'?pmql=(status%20%3D%20%22Self%20Service%22)';
@@ -581,11 +564,7 @@ class TasksTest extends TestCase
             'bpmn' => $bpmn,
         ]);
         factory(ProcessNotificationSetting::class)->create([
-            'process_id' => $process->id,
-            'element_id' => 'node_3',
-            'notifiable_type' => 'requester',
-            'notification_type' => 'assigned',
-        ]);
+            'process_id' => $process->id, 'notifiable_type' => 'requester')->state('element_id' => 'node_3');
 
         $route = route('api.process_events.trigger', [$process->id, 'event' => 'node_1']);
         $response = $this->apiCall('POST', $route, []);

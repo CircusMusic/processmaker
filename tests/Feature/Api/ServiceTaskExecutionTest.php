@@ -46,11 +46,7 @@ class ServiceTaskExecutionTest extends TestCase
     {
         ScriptExecutor::setTestConfig('php');
         factory(Script::class)->create([
-            'key' => 'EchoConnector',
-            'language' => 'php',
-            'code' => '<?php return ["pong" => $data["ping"]];',
-            'run_as_user_id' => $this->user->id,
-        ]);
+            'key' => 'EchoConnector', 'code' => '<?php return ["pong" => $data["ping"]];')->state('language' => 'php');
         $this->process = $this->createTestProcess();
     }
 

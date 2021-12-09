@@ -97,9 +97,7 @@ class CommentTest extends TestCase
         ]);
 
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => false,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => false);
 
         $this->user->permissions()->attach(Permission::byName($permission)->id);
 
@@ -141,9 +139,7 @@ class CommentTest extends TestCase
         ]);
 
         $this->user = factory(User::class)->create([
-            'password' => Hash::make('password'),
-            'is_administrator' => false,
-        ]);
+            'password' => Hash::make('password'), ])->state('is_administrator' => false);
 
         $this->user->permissions()->attach(Permission::byName($permission)->id);
 
@@ -189,7 +185,7 @@ class CommentTest extends TestCase
         $comment = factory(Comment::class)->create()->id;
 
         //load api
-        $response = $this->apiCall('GET', self::API_TEST_URL.'/'.$comment);
+        $response = $this->apiCall('GET')->state(self::API_TEST_URL.'/'.$comment);
 
         //Validate the status is correct
         $response->assertStatus(200);

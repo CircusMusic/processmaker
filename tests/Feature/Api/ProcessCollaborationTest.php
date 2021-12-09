@@ -45,23 +45,11 @@ class ProcessCollaborationTest extends TestCase
         ]);
         //Assign the task to $this->user
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_5',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_5');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_10',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_10');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_24',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_24');
 
         return $process;
     }

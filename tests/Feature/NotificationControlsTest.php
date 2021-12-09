@@ -36,9 +36,7 @@ class NotificationControlsTest extends TestCase
 
         // Create a user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         // Seed the processes table.
         Artisan::call('db:seed', ['--class' => 'ProcessSeeder']);
@@ -55,10 +53,7 @@ class NotificationControlsTest extends TestCase
 
         // Allow the process manager to receive canceled notificaitons
         factory(ProcessNotificationSetting::class)->create([
-            'process_id' => $process->getKey(),
-            'notifiable_type' => 'manager',
-            'notification_type' => 'canceled',
-        ]);
+            'process_id' => $process->getKey(), 'notification_type' => 'canceled')->state('notifiable_type' => 'manager');
 
         // Assert that our database has the notification settings we expect
         $this->assertDatabaseHas('process_notification_settings', [
@@ -112,9 +107,7 @@ class NotificationControlsTest extends TestCase
 
         // Create a user
         $adminUser = factory(User::class)->create([
-            'username' => 'admin',
-            'is_administrator' => true,
-        ]);
+            'username' => 'admin', ])->state('is_administrator' => true);
 
         // Seed the processes table.
         Artisan::call('db:seed', ['--class' => 'ProcessSeeder']);
