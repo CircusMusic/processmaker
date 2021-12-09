@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Admin;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use ProcessMaker\Models\Setting;
 use ProcessMaker\Models\User;
 use Tests\Feature\Shared\RequestHelper;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
@@ -27,7 +27,6 @@ class UserTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Users');
-
     }
 
     /**
@@ -37,10 +36,9 @@ class UserTest extends TestCase
      */
     public function testEditRoute()
     {
-
         $user_id = factory(User::class)->create()->id;
         // get the URL
-        $response = $this->webCall('GET', '/admin/users/' . $user_id . '/edit');
+        $response = $this->webCall('GET')->state('/admin/users/'.$user_id.'/edit');
 
         $response->assertStatus(200);
         // check the correct view is called
@@ -56,13 +54,9 @@ class UserTest extends TestCase
     {
         $user_id = factory(User::class)->create()->id;
         factory(Setting::class)->create([
-            'key' => 'users.properties',
-            'config' => '{"MyVar":"Test Var"}',
-            'format' => 'object',
-            'group' => 'Users'
-        ]);
+            'key' => 'users.properties', 'format' => 'object')->state('config' => '{"MyVar":"Test Var"}');
         // get the URL
-        $response = $this->webCall('GET', '/admin/users/' . $user_id . '/edit');
+        $response = $this->webCall('GET', '/admin/users/'.$user_id.'/edit');
         $response->assertStatus(200);
         // check the correct view is called
         $response->assertViewIs('admin.users.edit');
@@ -77,11 +71,7 @@ class UserTest extends TestCase
     {
         factory(User::class)->create()->id;
         factory(Setting::class)->create([
-            'key' => 'users.properties',
-            'config' => '{"MyVar":"Test Var"}',
-            'format' => 'object',
-            'group' => 'Users'
-        ]);
+            'key' => 'users.properties', 'format' => 'object')->state('config' => '{"MyVar":"Test Var"}');
         // get the URL
         $response = $this->webCall('GET', '/profile/edit');
         $response->assertStatus(200);

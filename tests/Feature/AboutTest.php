@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use ProcessMaker\Models\User;
-use Tests\TestCase;
 use Tests\Feature\Shared\RequestHelper;
+use Tests\TestCase;
 
 class AboutTest extends TestCase
 {
@@ -30,7 +30,7 @@ class AboutTest extends TestCase
         $this->user = factory(User::class)->create();
 
         // get the URL
-        $response = $this->webCall('GET', '/about');
+        $response = $this->webCall('GET')->state('/about');
 
         // check the correct view is called
         $response->assertStatus(200);

@@ -16,7 +16,7 @@ class SanitizeHelperTest extends TestCase
     public function testScreenWillNotSanitizeRichTextData()
     {
         $screen = factory(Screen::class)->create([
-            'config' => json_decode(file_get_contents(__DIR__ . '/Api/screens/FOUR-4408 B.json'))
+            'config' => json_decode(file_get_contents(__DIR__.'/Api/screens/FOUR-4408 B.json')),
         ]);
 
         $taskData = json_decode($this->taskData(), true)['data'];
@@ -32,7 +32,7 @@ class SanitizeHelperTest extends TestCase
     public function testScreenWillSanitizeRichTextDataIfIsEmptyDoNotSanitizeVariable()
     {
         $screen = factory(Screen::class)->create([
-            'config' => json_decode(file_get_contents(__DIR__ . '/Api/screens/FOUR-4408 B.json'))
+            'config' => json_decode(file_get_contents(__DIR__.'/Api/screens/FOUR-4408 B.json')),
         ]);
 
         $taskDataDoNotSanitizeEmpty = json_decode($this->taskDataDoNotSanitizeEmpty(), true)['data'];
@@ -42,7 +42,8 @@ class SanitizeHelperTest extends TestCase
         $this->assertEquals('Strong text formatted', $data['form_text_area_1']);
     }
 
-    private function taskData() {
+    private function taskData()
+    {
         return "{
             \"status\": \"COMPLETED\",
             \"data\": {
@@ -58,7 +59,8 @@ class SanitizeHelperTest extends TestCase
         }";
     }
 
-    private function taskDataDoNotSanitizeEmpty() {
+    private function taskDataDoNotSanitizeEmpty()
+    {
         return "{
             \"status\": \"COMPLETED\",
             \"data\": {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Api;
 
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,9 +23,10 @@ class ProcessManualTaskTest extends TestCase
     use WithFaker;
 
     /**
-     * @var Process $process
+     * @var Process
      */
     protected $process;
+
     private $requestStructure = [
         'id',
         'process_id',
@@ -33,12 +35,11 @@ class ProcessManualTaskTest extends TestCase
         'name',
         'initiated_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
      * Initialize the controller tests
-     *
      */
     protected function withUserSetUp()
     {
@@ -50,16 +51,13 @@ class ProcessManualTaskTest extends TestCase
      */
     private function createTestProcess(array $data = [])
     {
-        $data['bpmn'] = file_get_contents(__DIR__ . '/processes/ManualTask.bpmn');
+        $data['bpmn'] = file_get_contents(__DIR__.'/processes/ManualTask.bpmn');
         $process = factory(Process::class)->create($data);
         //Assign the task to $this->user
         $taskId = 'TaskUID';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $this->user->id,
-            'assignment_type' => User::class,
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => $taskId);
+
         return $process;
     }
 
@@ -99,10 +97,9 @@ class ProcessManualTaskTest extends TestCase
         ]);
         $message = $response->json()['data'][0]['body'];
         $this->assertEquals(
-            $this->user->fullname . " has completed the task " . $task['element_name'],
+            $this->user->fullname.' has completed the task '.$task['element_name'],
             $message
         );
-
     }
 
     /**
@@ -195,8 +192,8 @@ class ProcessManualTaskTest extends TestCase
             'element_name',
             'definition' => [
                 'id',
-                'name'
-            ]
+                'name',
+            ],
         ]);
     }
 
@@ -206,21 +203,15 @@ class ProcessManualTaskTest extends TestCase
     public function testTaskAssignedToGroup()
     {
         $foo = factory(User::class)->create(
-            ['firstname' => 'Foo', 'status' => 'ACTIVE']
-        );
+            ['firstname' => 'Foo')->state('status' => 'ACTIVE']);
         $bar = factory(User::class)->create(
-            ['firstname' => 'Bar', 'status' => 'ACTIVE']
-        );
+            ['firstname' => 'Bar')->state('status' => 'ACTIVE']);
         $group = factory(Group::class)->create(
-            ['id' => 999, 'status' => 'ACTIVE']
-        );
-        
-        foreach([$foo, $bar] as $user) {
+            ['id' => 999)->state('status' => 'ACTIVE']);
+
+        foreach ([$foo, $bar] as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $group_process = factory(Process::class)->create(['status' => 'ACTIVE']);
@@ -229,11 +220,7 @@ class ProcessManualTaskTest extends TestCase
 
         $taskId = 'node_3';
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $group_process->id,
-            'process_task_id' => $taskId,
-            'assignment_id' => $group->id,
-            'assignment_type' => Group::class
-        ]);
+            'process_id' => $group_process->id, 'assignment_id' => $group->id)->state('process_task_id' => $taskId);
 
         //Start a process request
         $route = route('api.process_events.trigger', [$group_process->id, 'event' => 'node_2']);
@@ -247,13 +234,13 @@ class ProcessManualTaskTest extends TestCase
         // Assert the first user "foo" got the task
         $this->assertEquals(1, count($tasks));
         $task_id = $tasks[0]['id'];
-        
+
         //Get the active tasks of the request for the other user
         //Since PR #3470, user_id is required as parameter
         $route = route('api.tasks.index', ['user_id' => $bar->id]);
         $response = $this->actingAs($bar, 'api')->json('GET', $route);
         $tasks = $response->json('data');
-        
+
         // Assert that "bar" did NOT get the task
         $this->assertEquals(0, count($tasks));
 
@@ -273,11 +260,11 @@ class ProcessManualTaskTest extends TestCase
 
         // Assert the next user "bar" got the task
         $this->assertEquals(count($tasks), 1);
-        
+
         // Complete the task
         $route = route('api.tasks.update', [$tasks[0]['id'], 'status' => 'COMPLETED']);
         $response = $this->apiCall('PUT', $route, ['data' => $data]);
-        
+
         // Start another request
         $route = route('api.process_events.trigger', [$group_process->id, 'event' => 'node_2']);
         $response = $this->apiCall('POST', $route, []);

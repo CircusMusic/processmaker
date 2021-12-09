@@ -3,39 +3,38 @@
 namespace Tests\Feature\Api;
 
 use ProcessMaker\Exception\ThereIsNoProcessManagerAssignedException;
+use ProcessMaker\Facades\WorkflowManager;
+use ProcessMaker\Models\Group;
+use ProcessMaker\Models\GroupMember;
 use ProcessMaker\Models\Process;
 use ProcessMaker\Models\ProcessRequest;
 use ProcessMaker\Models\ProcessRequestToken;
-use ProcessMaker\Models\User;
 use ProcessMaker\Models\Screen;
-use ProcessMaker\Models\Group;
-use ProcessMaker\Models\GroupMember;
-use ProcessMaker\Facades\WorkflowManager;
+use ProcessMaker\Models\User;
 use Tests\Feature\Shared\RequestHelper;
 use Tests\TestCase;
 
 class TaskAssignmentExecutionTest extends TestCase
 {
-
     use RequestHelper;
 
     /**
-     * @var Process $process
+     * @var Process
      */
     protected $process;
 
     /**
-     * @var \ProcessMaker\Nayra\Contracts\Bpmn\ActivityInterface $task
+     * @var \ProcessMaker\Nayra\Contracts\Bpmn\ActivityInterface
      */
     protected $task;
 
     /**
-     * @var \ProcessMaker\Models\User $assigned
+     * @var \ProcessMaker\Models\User
      */
     protected $assigned;
 
     /**
-     * @var array $requestStructure
+     * @var array
      */
     private $requestStructure = [
         'id',
@@ -45,7 +44,7 @@ class TaskAssignmentExecutionTest extends TestCase
         'name',
         'initiated_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -57,15 +56,13 @@ class TaskAssignmentExecutionTest extends TestCase
         $this->process = factory(Process::class)->create();
 
         // Load a single task process
-        $this->process->bpmn = file_get_contents(__DIR__ . '/processes/SingleTask.bpmn');
+        $this->process->bpmn = file_get_contents(__DIR__.'/processes/SingleTask.bpmn');
 
         // Create user to be assigned to the task
         $task_uid = 'UserTaskUID';
         $this->task = $this->process->getDefinitions()->getActivity($task_uid);
         $this->assigned = factory(User::class)->create([
-            'id' => $this->task->getProperty('assignedUsers'),
-            'status' => 'ACTIVE',
-        ]);
+            'id' => $this->task->getProperty('assignedUsers'), ])->state('status' => 'ACTIVE');
 
         // When save the process creates the assignments
         $this->process->save();
@@ -107,13 +104,13 @@ class TaskAssignmentExecutionTest extends TestCase
         $user = factory(User::class)->create();
 
         $process = factory(Process::class)->create([
-            'bpmn' => file_get_contents(__DIR__ . '/processes/ByUserIdAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/ByUserIdAssignment.bpmn'),
         ]);
 
-        $run = function($data) use ($process) {
-
+        $run = function ($data) use ($process) {
             $route = route('api.process_events.trigger',
                 [$process->id, 'event' => 'node_1']);
+
             return $this->apiCall('POST', $route, $data)->json();
         };
 
@@ -122,7 +119,7 @@ class TaskAssignmentExecutionTest extends TestCase
 
         $task = ProcessRequestToken::where([
             'process_request_id' => $requestId,
-            'status' => 'ACTIVE'
+            'status' => 'ACTIVE',
         ])->firstOrFail();
 
         $this->assertEquals($user->id, $task->user_id);
@@ -150,31 +147,23 @@ class TaskAssignmentExecutionTest extends TestCase
         $group = factory(Group::class)->create();
         foreach ($users as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id,
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $screen = factory(Screen::class)->create();
 
-        $bpmn = file_get_contents(__DIR__ . '/processes/SelfServeAssignment.bpmn');
+        $bpmn = file_get_contents(__DIR__.'/processes/SelfServeAssignment.bpmn');
         $bpmn = str_replace(
-            ['[SCREEN_ID]', '[GROUP_ID]', '[USER_ID]'],
-            [$screen->id, $group->id, $userWithNoGroup->id],
-            $bpmn
-        );
+            ['[SCREEN_ID]', '[USER_ID]'])->state('[GROUP_ID]');
         $process = factory(Process::class)->create([
-            'bpmn' => $bpmn,
-            'user_id' => $this->user->id,
-        ]);
+            'bpmn' => $bpmn, ])->state('user_id' => $this->user->id);
 
         $event = $process->getDefinitions()->getEvent('node_4');
         $processRequest = WorkflowManager::triggerStartEvent($process, $event, []);
         $task = $processRequest->refresh()->tokens()->where('status', 'ACTIVE')->first();
 
         $updateTaskUrl = route('api.tasks.update', [$task->id]);
-        
+
         // Assert someone not individually assigned or assigned to a group can not take the task
         $this->user = $unassignedUser;
         $listTasksUrl = route('api.tasks.index', ['pmql' => "user_id = {$unassignedUser->id}"]);
@@ -185,7 +174,7 @@ class TaskAssignmentExecutionTest extends TestCase
             'user_id' => $this->user->id,
         ]);
         $response->assertStatus(403); // should be not authorized
-        
+
         // Assert a group member can claim the task
         $this->user = $users[1];
         $listTasksUrl = route('api.tasks.index');
@@ -198,7 +187,6 @@ class TaskAssignmentExecutionTest extends TestCase
             'user_id' => $this->user->id,
         ]);
         $response->assertStatus(200);
-
 
         // Reset task assignment
         $task = $processRequest->refresh()->tokens()->where('status', 'ACTIVE')->first();
@@ -219,7 +207,7 @@ class TaskAssignmentExecutionTest extends TestCase
         ]);
         $response->assertStatus(200);
     }
-    
+
     public function testSelfServeUserPersistence()
     {
         $users = factory(User::class, 20)->create(['status'=>'ACTIVE']);
@@ -229,31 +217,23 @@ class TaskAssignmentExecutionTest extends TestCase
         $group = factory(Group::class)->create();
         foreach ($users as $user) {
             factory(GroupMember::class)->create([
-                'member_id' => $user->id,
-                'member_type' => User::class,
-                'group_id' => $group->id,
-            ]);
+                'member_id' => $user->id, 'group_id' => $group->id)->state('member_type' => User::class);
         }
 
         $screen = factory(Screen::class)->create();
 
-        $bpmn = file_get_contents(__DIR__ . '/processes/SelfServeAssignment.bpmn');
+        $bpmn = file_get_contents(__DIR__.'/processes/SelfServeAssignment.bpmn');
         $bpmn = str_replace(
-            ['[SCREEN_ID]', '[GROUP_ID]', '[USER_ID]'],
-            [$screen->id, $group->id, $userWithNoGroup->id],
-            $bpmn
-        );
+            ['[SCREEN_ID]', '[USER_ID]'])->state('[GROUP_ID]');
         $process = factory(Process::class)->create([
-            'bpmn' => $bpmn,
-            'user_id' => $this->user->id,
-        ]);
+            'bpmn' => $bpmn, ])->state('user_id' => $this->user->id);
 
         $event = $process->getDefinitions()->getEvent('node_4');
         $processRequest = WorkflowManager::triggerStartEvent($process, $event, []);
         $task = $processRequest->refresh()->tokens()->where('status', 'ACTIVE')->first();
 
         $updateTaskUrl = route('api.tasks.update', [$task->id]);
-        
+
         // Assert that the user magic variable is empty
         $this->assertNull($processRequest->data['_user']);
 
@@ -264,7 +244,7 @@ class TaskAssignmentExecutionTest extends TestCase
             'user_id' => $this->user->id,
         ]);
         $response->assertStatus(200);
-        
+
         // Reset task assignment
         $task = $processRequest->refresh()->tokens()->where('status', 'ACTIVE')->first();
         $task['is_self_service'] = true;
@@ -278,7 +258,7 @@ class TaskAssignmentExecutionTest extends TestCase
             'user_id' => $this->user->id,
         ]);
         $response->assertStatus(200);
-        
+
         // Assert that the user magic variable is now populated
         $processRequest->refresh();
         $this->assertIsArray($processRequest->data['_user']);
@@ -297,7 +277,7 @@ class TaskAssignmentExecutionTest extends TestCase
         $this->process = factory(Process::class)->create();
 
         // Load process with single task assigned to Process Manager
-        $this->process->bpmn = file_get_contents(__DIR__ . '/processes/AssignedToProcessManager.bpmn');
+        $this->process->bpmn = file_get_contents(__DIR__.'/processes/AssignedToProcessManager.bpmn');
         $this->process->manager_id = $manager->id;
         $this->process->save();
 
@@ -334,7 +314,7 @@ class TaskAssignmentExecutionTest extends TestCase
         $this->process = factory(Process::class)->create();
 
         // Load process with single task assigned to Process Manager
-        $this->process->bpmn = file_get_contents(__DIR__ . '/processes/AssignedToProcessManager.bpmn');
+        $this->process->bpmn = file_get_contents(__DIR__.'/processes/AssignedToProcessManager.bpmn');
         $this->process->save();
 
         //Start a process request

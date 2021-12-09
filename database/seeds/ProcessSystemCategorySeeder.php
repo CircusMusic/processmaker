@@ -12,10 +12,7 @@ class ProcessSystemCategorySeeder extends Seeder
      */
     public function run()
     {
-
         factory(ProcessCategory::class)->create([
-            'name' => 'System',
-            'is_system' => true
-        ]);
+            'name' => 'System', ])->state('is_system' => true);
     }
 }

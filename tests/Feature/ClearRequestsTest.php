@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\WithFaker;
@@ -30,9 +31,10 @@ class ClearRequestsTest extends TestCase
     use ProcessTestingTrait;
 
     /**
-     * @var Process $process
+     * @var Process
      */
     protected $process;
+
     private $requestStructure = [
         'id',
         'process_id',
@@ -41,7 +43,7 @@ class ClearRequestsTest extends TestCase
         'name',
         'initiated_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     const API_TEST_URL = '/comments';
@@ -53,6 +55,7 @@ class ClearRequestsTest extends TestCase
     {
         $data['bpmn'] = Process::getProcessTemplate('IntermediateTimerEvent.bpmn');
         $process = factory(Process::class)->create($data);
+
         return $process;
     }
 
@@ -62,27 +65,16 @@ class ClearRequestsTest extends TestCase
     private function createTestCollaborationProcess()
     {
         $process = factory(Process::class)->create([
-            'bpmn' => Process::getProcessTemplate('Collaboration.bpmn')
+            'bpmn' => Process::getProcessTemplate('Collaboration.bpmn'),
         ]);
         //Assign the task to $this->user
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_5',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_5');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_10',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_10');
         factory(ProcessTaskAssignment::class)->create([
-            'process_id' => $process->id,
-            'process_task_id' => '_24',
-            'assignment_id' => $this->user->id,
-            'assignment_type' => 'user',
-        ]);
+            'process_id' => $process->id, 'assignment_id' => $this->user->id)->state('process_task_id' => '_24');
+
         return $process;
     }
 
@@ -131,7 +123,7 @@ class ClearRequestsTest extends TestCase
      * @param array $tasks
      * @param string $name
      *
-     * @return integer
+     * @return int
      */
     private function findTaskByName(array $tasks, $name)
     {
@@ -140,6 +132,7 @@ class ClearRequestsTest extends TestCase
                 break;
             }
         }
+
         return $index;
     }
 
@@ -149,7 +142,7 @@ class ClearRequestsTest extends TestCase
         $response->assertStatus(200);
 
         $process = factory(Process::class)->create([
-            'bpmn' => Process::getProcessTemplate('SingleTask.bpmn')
+            'bpmn' => Process::getProcessTemplate('SingleTask.bpmn'),
         ]);
         $bpmnProcess = $process->getDefinitions()->getElementsByTagNameNS(BpmnDocument::BPMN_MODEL, 'process')->item(0);
         $bpmnProcessId = $bpmnProcess->getAttribute('id');
@@ -171,32 +164,29 @@ class ClearRequestsTest extends TestCase
         factory(Comment::class, 5)->create([
             'commentable_id' => $model->getKey(),
             'commentable_type' => get_class($model),
-            'hidden' => false
+            'hidden' => false,
         ]);
 
         factory(Comment::class, 5)->create([
             'commentable_id' => $model->getKey(),
             'commentable_type' => get_class($model),
-            'hidden' => true
+            'hidden' => true,
         ]);
 
         // Add comments to Requests
         $model = factory(ProcessRequest::class)->create([
-            'process_id' => $process->id,
-            'callable_id' => 'PROCESS_1',
-            'process_collaboration_id' => null,
+            'process_id' => $process->id, 'process_collaboration_id' => null)->state('callable_id' => 'PROCESS_1');
+
+        factory(Comment::class, 5)->create([
+            'commentable_id' => $model->getKey(),
+            'commentable_type' => get_class($model),
+            'hidden' => false,
         ]);
 
         factory(Comment::class, 5)->create([
             'commentable_id' => $model->getKey(),
             'commentable_type' => get_class($model),
-            'hidden' => false
-        ]);
-
-        factory(Comment::class, 5)->create([
-            'commentable_id' => $model->getKey(),
-            'commentable_type' => get_class($model),
-            'hidden' => true
+            'hidden' => true,
         ]);
 
         // Add 3 comments to Process
@@ -204,7 +194,7 @@ class ClearRequestsTest extends TestCase
         factory(Comment::class, 3)->create([
             'commentable_id' => $model->getKey(),
             'commentable_type' => get_class($model),
-            'hidden' => false
+            'hidden' => false,
         ]);
     }
 
@@ -213,24 +203,23 @@ class ClearRequestsTest extends TestCase
         // We create a fake file to upload
         Storage::fake('public');
         $fileUpload = UploadedFile::fake()->create('my_test_file123.txt', 1);
-  
+
         // We create a model (in this case a user) and associate to him the file
         $model = factory(User::class)->create();
         $model->addMedia($fileUpload)->toMediaCollection('local');
-  
-  
+
         // Basic listing assertions
         $response = $this->apiCall('GET', self::API_TEST_URL);
-  
+
         // Validate the header status code
         $response->assertStatus(200);
-  
+
         // Filtered listing assertions
-        $response = $this->apiCall('GET', self::API_TEST_URL . '?filter=123');
+        $response = $this->apiCall('GET', self::API_TEST_URL.'?filter=123');
         $response->assertStatus(200);
-  
+
         // Filtered listing assertions when filter string is not found
-        $response = $this->apiCall('GET', self::API_TEST_URL . '?filter=xyz9393');
+        $response = $this->apiCall('GET', self::API_TEST_URL.'?filter=xyz9393');
         $response->assertStatus(200);
     }
 
@@ -239,25 +228,25 @@ class ClearRequestsTest extends TestCase
         // We create a fake file to upload
         Storage::fake('public');
         $fileUpload = UploadedFile::fake()->create('request_test_file456.txt', 1);
-  
+
         // We create a model (in this case a user) and associate to him the file
         $model = ProcessRequest::find(1);
         $model->addMedia($fileUpload)
             ->withCustomProperties(['data_name' => 'test'])
             ->toMediaCollection('local');
-  
+
         // Basic listing assertions
         $response = $this->apiCall('GET', self::API_TEST_URL);
-  
+
         // Validate the header status code
         $response->assertStatus(200);
-  
+
         // Filtered listing assertions
-        $response = $this->apiCall('GET', self::API_TEST_URL . '?filter=456');
+        $response = $this->apiCall('GET', self::API_TEST_URL.'?filter=456');
         $response->assertStatus(200);
-  
+
         // Filtered listing assertions when filter string is not found
-        $response = $this->apiCall('GET', self::API_TEST_URL . '?filter=xyz9393');
+        $response = $this->apiCall('GET', self::API_TEST_URL.'?filter=xyz9393');
         $response->assertStatus(200);
     }
 
@@ -273,7 +262,7 @@ class ClearRequestsTest extends TestCase
         $token = $request->tokens()->where('element_id', '_3')->first();
         $this->completeTask($token);
     }
-  
+
     public function testCommandClearRequests()
     {
         // Run process with timers

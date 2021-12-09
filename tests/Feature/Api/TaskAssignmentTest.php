@@ -25,7 +25,7 @@ class TaskAssignmentTest extends TestCase
         'assignment_id',
         'assignment_type',
         'updated_at',
-        'created_at'
+        'created_at',
     ];
 
     /**
@@ -54,7 +54,7 @@ class TaskAssignmentTest extends TestCase
             'process_id' => $process->id,
             'process_task_id' => $task_uid,
             'assignment_id' => $user->id,
-            'assignment_type' => 'ProcessMaker\Models\User'
+            'assignment_type' => 'ProcessMaker\Models\User',
         ]);
 
         //Validate the header status code
@@ -81,7 +81,7 @@ class TaskAssignmentTest extends TestCase
             'process_id' => $process->id,
             'process_task_id' => $task_uid,
             'assignment_id' => $group->id,
-            'assignment_type' => 'ProcessMaker\Models\Group'
+            'assignment_type' => 'ProcessMaker\Models\Group',
         ]);
 
         //Validate the header status code
@@ -107,12 +107,8 @@ class TaskAssignmentTest extends TestCase
         $task_uid = Faker::create()->uuid;
         $group = factory(Group::class)->create();
 
-        $response = $this->apiCall('PUT', self::API_TEST_URL . '/' . $processTaskAssignment->id, [
-            'process_id' => $process->id,
-            'process_task_id' => $task_uid,
-            'assignment_id' => $group->id,
-            'assignment_type' => 'ProcessMaker\Models\Group'
-        ]);
+        $response = $this->apiCall('PUT', [
+            'process_id' => $process->id)->state(self::API_TEST_URL.'/'.$processTaskAssignment->id);
 
         $response->assertStatus(200);
 
@@ -137,11 +133,11 @@ class TaskAssignmentTest extends TestCase
     {
         $process = factory(Process::class)->create([
             'status' => 'ACTIVE',
-            'bpmn' => file_get_contents(__DIR__ . '/processes/InvalidUserAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/InvalidUserAssignment.bpmn'),
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -152,7 +148,7 @@ class TaskAssignmentTest extends TestCase
     {
         $process = factory(Process::class)->create([
             'status' => 'ACTIVE',
-            'bpmn' => file_get_contents(__DIR__ . '/processes/InvalidGroupAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/InvalidGroupAssignment.bpmn'),
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
@@ -171,11 +167,11 @@ class TaskAssignmentTest extends TestCase
     {
         $process = factory(Process::class)->create([
             'status' => 'ACTIVE',
-            'bpmn' => file_get_contents(__DIR__ . '/processes/InvalidGroupAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/InvalidGroupAssignment.bpmn'),
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -186,11 +182,11 @@ class TaskAssignmentTest extends TestCase
     {
         $process = factory(Process::class)->create([
             'status' => 'ACTIVE',
-            'bpmn' => file_get_contents(__DIR__ . '/processes/InvalidPreviousUserAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/InvalidPreviousUserAssignment.bpmn'),
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 
@@ -201,11 +197,11 @@ class TaskAssignmentTest extends TestCase
     {
         $process = factory(Process::class)->create([
             'status' => 'ACTIVE',
-            'bpmn' => file_get_contents(__DIR__ . '/processes/InvalidUserByIDAssignment.bpmn'),
+            'bpmn' => file_get_contents(__DIR__.'/processes/InvalidUserByIDAssignment.bpmn'),
         ]);
         $process->manager_id = factory(User::class)->create()->id;
         $process->save();
-        $instance = $this->startProcess($process, 'node_1');
+        $instance = $this->startProcess($process)->state('node_1');
         $this->assertEquals($process->manager_id, $instance->tokens()->where('status', 'ACTIVE')->first()->user_id);
     }
 }

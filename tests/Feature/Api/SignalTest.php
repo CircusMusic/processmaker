@@ -17,12 +17,13 @@ class SignalTest extends TestCase
     use RequestHelper;
 
     protected $resource = 'api.signals';
+
     protected $structure = [
         'id',
         'detail',
         'name',
         'processes',
-        'type'
+        'type',
     ];
 
     public function createSignal($count)
@@ -33,12 +34,11 @@ class SignalTest extends TestCase
 
         $signals = [];
 
-        for ($i=0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             // Create signal data ..
             $signalData = [
-                'id' => $faker->unique()->lexify('????'),
-                'name' => $faker->unique()->lexify('??????????????????'),
-                'detail' => $faker->sentence(5)
+                'id' => $faker->unique()->lexify('????'))->state('name' => $faker->unique()->lexify('??????????????????'),
+                'detail' => $faker->sentence(5),
             ];
 
             $newSignal = new SignalData(
@@ -56,6 +56,7 @@ class SignalTest extends TestCase
 
             $signals[] = ['id' => $newSignal->getId(), 'name' => $newSignal->getName()];
         }
+
         return $signals;
     }
 
@@ -72,8 +73,8 @@ class SignalTest extends TestCase
         $page = 1;
         $perPage = 10;
 
-        $route = route($this->resource . '.index');
-        $response = $this->apiCall('GET', $route . '?page=' . $page . '&per_page=' . $perPage);
+        $route = route($this->resource.'.index');
+        $response = $this->apiCall('GET', $route.'?page='.$page.'&per_page='.$perPage);
         //Verify the status
         $response->assertStatus(200);
         //Verify the structure
@@ -86,7 +87,7 @@ class SignalTest extends TestCase
             'count' => $perPage,
             'per_page' => $perPage,
             'current_page' => $page,
-            'total_pages' => 2
+            'total_pages' => 2,
         ], $meta);
         //Verify the data size
         $this->assertCount($meta['count'], $data);
@@ -105,8 +106,8 @@ class SignalTest extends TestCase
         $page = 2;
         $perPage = 10;
 
-        $route = route($this->resource . '.index');
-        $response = $this->apiCall('GET', $route . '?page=' . $page . '&per_page=' . $perPage);
+        $route = route($this->resource.'.index');
+        $response = $this->apiCall('GET', $route.'?page='.$page.'&per_page='.$perPage);
         //Verify the status
         $response->assertStatus(200);
         //Verify the structure
@@ -119,7 +120,7 @@ class SignalTest extends TestCase
             'count' => $perPage,
             'per_page' => $perPage,
             'current_page' => $page,
-            'total_pages' => 2
+            'total_pages' => 2,
         ], $meta);
         //Verify the data size
         $this->assertCount($meta['count'], $data);
@@ -138,8 +139,8 @@ class SignalTest extends TestCase
         $page = 1;
         $perPage = 10;
 
-        $route = route($this->resource . '.index');
-        $response = $this->apiCall('GET', $route . '?page=' . $page . '&per_page=' . $perPage);
+        $route = route($this->resource.'.index');
+        $response = $this->apiCall('GET', $route.'?page='.$page.'&per_page='.$perPage);
         //Verify the status
         $response->assertStatus(200);
         //Verify the structure
@@ -152,7 +153,7 @@ class SignalTest extends TestCase
             'count' => $perPage,
             'per_page' => $perPage,
             'current_page' => $page,
-            'total_pages' => 1
+            'total_pages' => 1,
         ], $meta);
         //Verify the data size
         $this->assertCount($meta['count'], $data);

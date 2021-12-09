@@ -12,26 +12,25 @@ use Tests\TestCase;
 
 class TaskAssignmentPreviousOwnerTest extends TestCase
 {
-
     use RequestHelper;
 
     /**
-     * @var Process $process
+     * @var Process
      */
     protected $process;
 
     /**
-     * @var \ProcessMaker\Nayra\Contracts\Bpmn\ActivityInterface $task
+     * @var \ProcessMaker\Nayra\Contracts\Bpmn\ActivityInterface
      */
     protected $task;
 
     /**
-     * @var \ProcessMaker\Models\User $assigned
+     * @var \ProcessMaker\Models\User
      */
     protected $assigned;
 
     /**
-     * @var array $requestStructure
+     * @var array
      */
     private $requestStructure = [
         'id',
@@ -41,7 +40,7 @@ class TaskAssignmentPreviousOwnerTest extends TestCase
         'name',
         'initiated_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -53,15 +52,13 @@ class TaskAssignmentPreviousOwnerTest extends TestCase
         $this->process = factory(Process::class)->create();
 
         // Load a single task process
-        $this->process->bpmn = file_get_contents(__DIR__ . '/processes/PreviousTaskAssignee.bpmn');
+        $this->process->bpmn = file_get_contents(__DIR__.'/processes/PreviousTaskAssignee.bpmn');
 
         // Create user to be assigned to the task
         $task_uid = 'UserTaskUID';
         $this->task = $this->process->getDefinitions()->getActivity($task_uid);
         $this->assigned = factory(User::class)->create([
-            'id' => $this->task->getProperty('assignedUsers'),
-            'status' => 'ACTIVE',
-        ]);
+            'id' => $this->task->getProperty('assignedUsers'), ])->state('status' => 'ACTIVE');
 
         // When save the process creates the assignments
         $this->process->save();
@@ -102,7 +99,7 @@ class TaskAssignmentPreviousOwnerTest extends TestCase
 
         // Reload request
         $request = ProcessRequest::find($requestId);
-        
+
         // Verify assigned user is the same of the previous task
         $this->assertEquals($request->tokens[1]->user_id, $request->tokens[2]->user_id);
     }
@@ -121,6 +118,7 @@ class TaskAssignmentPreviousOwnerTest extends TestCase
         $process = $task->process;
         $instance = $task->processRequest;
         WorkflowManager::completeTask($process, $instance, $task, $data);
+
         return $task->refresh();
     }
 }

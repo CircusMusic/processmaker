@@ -18,16 +18,16 @@ use Tests\TestCase;
  */
 class ServiceTaskExecutionTest extends TestCase
 {
-
     use RequestHelper;
     use WithFaker;
 
     const START_EVENT_ID = '_3';
 
     /**
-     * @var Process $process
+     * @var Process
      */
     protected $process;
+
     private $requestStructure = [
         'id',
         'process_id',
@@ -36,28 +36,22 @@ class ServiceTaskExecutionTest extends TestCase
         'name',
         'initiated_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
      * Initialize the controller tests
-     *
      */
     protected function withUserSetUp()
     {
         ScriptExecutor::setTestConfig('php');
         factory(Script::class)->create([
-            'key' => 'EchoConnector',
-            'language' => 'php',
-            'code' => '<?php return ["pong" => $data["ping"]];',
-            'run_as_user_id' => $this->user->id,
-        ]);
+            'key' => 'EchoConnector', 'code' => '<?php return ["pong" => $data["ping"]];')->state('language' => 'php');
         $this->process = $this->createTestProcess();
     }
-    
+
     /**
      * Make sure we have a personal access client set up
-     *
      */
     public function setUpWithPersonalAccessClient()
     {
@@ -71,6 +65,7 @@ class ServiceTaskExecutionTest extends TestCase
     {
         $data['bpmn'] = Process::getProcessTemplate('ServiceTaskProcess.bpmn');
         $process = factory(Process::class)->create($data);
+
         return $process;
     }
 

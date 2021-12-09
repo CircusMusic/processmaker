@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use ProcessMaker\Models\ProcessCategory;
 use ProcessMaker\Models\ScreenCategory;
 use ProcessMaker\Models\ScriptCategory;
-use ProcessMaker\Models\ProcessCategory;
 
 class CategorySystemSeeder extends Seeder
 {
@@ -15,19 +15,10 @@ class CategorySystemSeeder extends Seeder
     public function run()
     {
         factory(ScreenCategory::class)->create([
-            'name' => __('Uncategorized'),
-            'status' => 'ACTIVE',
-            'is_system' => false
-        ]);
+            'name' => __('Uncategorized'), 'is_system' => false)->state('status' => 'ACTIVE');
         factory(ScriptCategory::class)->create([
-            'name' => __('Uncategorized'),
-            'status' => 'ACTIVE',
-            'is_system' => false
-        ]);
+            'name' => __('Uncategorized'), 'is_system' => false)->state('status' => 'ACTIVE');
         factory(ProcessCategory::class)->create([
-            'name' => __('Uncategorized'),
-            'status' => 'ACTIVE',
-            'is_system' => false
-        ]);
+            'name' => __('Uncategorized'), 'is_system' => false)->state('status' => 'ACTIVE');
     }
 }

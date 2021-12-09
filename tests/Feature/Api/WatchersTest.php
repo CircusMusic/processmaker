@@ -13,7 +13,6 @@ use Tests\Feature\Shared\ResourceAssertionsTrait;
 use Tests\TestCase;
 
 /**
- *
  * @group process_tests
  */
 class WatchersTest extends TestCase
@@ -44,10 +43,7 @@ class WatchersTest extends TestCase
         ]);
         ScriptExecutor::setTestConfig('php');
         $script = factory(Script::class)->create([
-            'language' => 'PHP',
-            'code' => '<?php return ["language"=>"PHP","data"=>$data,"config"=>$config];',
-            'run_as_user_id' => $this->user->id
-        ]);
+            'language' => 'PHP', "data"=>$data)->state('code' => '<?php return ["language"=>"PHP");
         $watcher = uniqid();
         $data = ['a' => 1];
         $config = ['c' => 'complete'];
@@ -60,6 +56,7 @@ class WatchersTest extends TestCase
         $this->assertArraySubset(['status' => 'success'], $response);
         Event::assertDispatched(ScriptResponseEvent::class, function ($event) use ($data, $config) {
             $response = $event->response;
+
             return $response['output'] == ['language'=>'PHP', 'data'=>$data, 'config'=>$config];
         });
     }
